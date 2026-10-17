@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="haloGrad" cx="50%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#FEF08A" stop-opacity="0.9" />
+      <stop offset="45%" stop-color="#F59E0B" stop-opacity="0.7" />
+      <stop offset="80%" stop-color="#7A0C16" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#320409" stop-opacity="1" />
+    </radialGradient>
+
+    <!-- Silk Angavastram Gradient -->
+    <linearGradient id="saffronSilk" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FBBF24" />
+      <stop offset="30%" stop-color="#F59E0B" />
+      <stop offset="70%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#B45309" />
+    </linearGradient>
+
+    <!-- Golden Border Pattern -->
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FACC15" />
+      <stop offset="50%" stop-color="#FEF08A" />
+      <stop offset="100%" stop-color="#EAB308" />
+    </linearGradient>
+
+    <!-- Skin Tone Gradient -->
+    <radialGradient id="skinTone" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#F5D0A9" />
+      <stop offset="60%" stop-color="#E2A76F" />
+      <stop offset="100%" stop-color="#C68249" />
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="500" height="600" fill="url(#haloGrad)" />
+
+  <!-- Temple Mandap Arch / Ornate Halo -->
+  <circle cx="250" cy="220" r="160" fill="none" stroke="url(#goldBorder)" stroke-width="6" stroke-dasharray="8 6" opacity="0.8" />
+  <circle cx="250" cy="220" r="145" fill="none" stroke="#FEF08A" stroke-width="2" opacity="0.6" />
+
+  <!-- Radiating Sunrays of Vedic Wisdom -->
+  <g stroke="#FDE047" stroke-width="1.5" opacity="0.35">
+    <line x1="250" y1="50" x2="250" y2="20" />
+    <line x1="370" y1="100" x2="395" y2="75" />
+    <line x1="130" y1="100" x2="105" y2="75" />
+    <line x1="420" y1="220" x2="450" y2="220" />
+    <line x1="80" y1="220" x2="50" y2="220" />
+  </g>
+
+  <!-- Sacred Om at Top -->
+  <circle cx="250" cy="72" r="28" fill="#7A0C16" stroke="url(#goldBorder)" stroke-width="2" />
+  <text x="250" y="82" font-size="28" font-family="'Noto Sans Kannada', serif" fill="#FDE047" text-anchor="middle" font-weight="bold">ॐ</text>
+
+  <!-- Torso & Saffron Angavastram -->
+  <path d="M120 600 C120 440, 160 380, 250 380 C340 380, 380 440, 380 600 Z" fill="#991B1B" />
+  <!-- Silk Angavastram Draped over Shoulder -->
+  <path d="M140 600 C150 430, 200 375, 250 385 C290 395, 340 450, 370 600 Z" fill="url(#saffronSilk)" opacity="0.95" />
+  <path d="M130 500 C180 440, 250 445, 300 480 C320 540, 330 600, 330 600 L110 600 Z" fill="#F59E0B" opacity="0.6" />
+
+  <!-- Rudraksha Necklace Beads -->
+  <g fill="#78350F" stroke="#FDE047" stroke-width="1">
+    <circle cx="210" cy="400" r="7" />
+    <circle cx="225" cy="415" r="7" />
+    <circle cx="240" cy="425" r="8" />
+    <circle cx="255" cy="428" r="8" />
+    <circle cx="270" cy="424" r="8" />
+    <circle cx="285" cy="412" r="7" />
+    <circle cx="298" cy="398" r="7" />
+  </g>
+
+  <!-- Neck -->
+  <path d="M225 320 L225 390 C225 400, 275 400, 275 390 L275 320 Z" fill="url(#skinTone)" />
+
+  <!-- Head Base -->
+  <ellipse cx="250" cy="245" rx="72" ry="92" fill="url(#skinTone)" />
+
+  <!-- Hair / Traditional Shikha Style -->
+  <path d="M178 220 C178 140, 322 140, 322 220 C322 180, 310 155, 250 155 C190 155, 178 180, 178 220 Z" fill="#1C1917" />
+  <ellipse cx="250" cy="150" rx="40" ry="22" fill="#1C1917" />
+
+  <!-- Ears -->
+  <ellipse cx="176" cy="245" rx="10" ry="22" fill="#E2A76F" />
+  <ellipse cx="324" cy="245" rx="10" ry="22" fill="#E2A76F" />
+  <!-- Golden Kundala (Earrings) -->
+  <circle cx="176" cy="262" r="4.5" fill="#FACC15" stroke="#78350F" stroke-width="1" />
+  <circle cx="324" cy="262" r="4.5" fill="#FACC15" stroke="#78350F" stroke-width="1" />
+
+  <!-- Auspicious Tripundra & Vermilion Tilak (Chandan & Kumkuma) -->
+  <!-- Chandan White Lines -->
+  <line x1="225" y1="198" x2="275" y2="198" stroke="#FEF08A" stroke-width="3" stroke-linecap="round" />
+  <line x1="222" y1="205" x2="278" y2="205" stroke="#FEF08A" stroke-width="3" stroke-linecap="round" />
+  <line x1="227" y1="212" x2="273" y2="212" stroke="#FEF08A" stroke-width="3" stroke-linecap="round" />
+  <!-- Sacred Kumkuma Center Bindi / Urdhva Pundra -->
+  <ellipse cx="250" cy="205" rx="4" ry="10" fill="#DC2626" />
+  <circle cx="250" cy="216" r="3.5" fill="#FACC15" />
+
+  <!-- Eyebrows -->
+  <path d="M205 225 Q225 218 240 226" fill="none" stroke="#292524" stroke-width="3.5" stroke-linecap="round" />
+  <path d="M260 226 Q275 218 295 225" fill="none" stroke="#292524" stroke-width="3.5" stroke-linecap="round" />
+
+  <!-- Eyes - Calm, Compassionate, Wise -->
+  <path d="M208 238 Q223 230 238 238 Q223 246 208 238 Z" fill="#FFFFFF" stroke="#44403C" stroke-width="1.5" />
+  <circle cx="223" cy="238" r="4.5" fill="#1C1917" />
+  <circle cx="224" cy="236.5" r="1.5" fill="#FFFFFF" />
+
+  <path d="M262 238 Q277 230 292 238 Q277 246 262 238 Z" fill="#FFFFFF" stroke="#44403C" stroke-width="1.5" />
+  <circle cx="277" cy="238" r="4.5" fill="#1C1917" />
+  <circle cx="278" cy="236.5" r="1.5" fill="#FFFFFF" />
+
+  <!-- Nose -->
+  <path d="M250 228 L248 265 Q250 272 254 265" fill="none" stroke="#A16207" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M242 267 Q250 272 258 267" fill="none" stroke="#A16207" stroke-width="2" stroke-linecap="round" />
+
+  <!-- Benevolent Smile -->
+  <path d="M232 290 Q250 302 268 290" fill="none" stroke="#991B1B" stroke-width="3.5" stroke-linecap="round" />
+  <path d="M236 292 Q250 299 264 292" fill="none" stroke="#7F1D1D" stroke-width="1" />
+
+  <!-- Well-groomed Beard & Mustache -->
+  <path d="M228 280 Q240 286 248 283" fill="none" stroke="#292524" stroke-width="2" stroke-linecap="round" />
+  <path d="M272 280 Q260 286 252 283" fill="none" stroke="#292524" stroke-width="2" stroke-linecap="round" />
+  <path d="M230 305 Q250 328 270 305" fill="none" stroke="#292524" stroke-width="2.5" stroke-linecap="round" opacity="0.6" />
+
+  <!-- Bottom Name Banner -->
+  <rect x="30" y="525" width="440" height="60" rx="12" fill="#560714" stroke="url(#goldBorder)" stroke-width="2.5" />
+  <text x="250" y="550" font-size="20" font-family="'Noto Sans Kannada', sans-serif" font-weight="900" fill="#FEF08A" text-anchor="middle">ಪಂಡಿತ್ ಸಚಿನ್ ಶರ್ಮಾ</text>
+  <text x="250" y="572" font-size="13" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" fill="#FACC15" text-anchor="middle" letter-spacing="1.5">PANDIT SACHIN SHARMA • ASTRO KANNADA</text>
+</svg>

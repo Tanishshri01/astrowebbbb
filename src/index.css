@@ -1,0 +1,137 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-temple-red: #45050C;
+    --color-temple-red-deep: #2A0307;
+    --color-temple-red-dark: #120102;
+    --color-kumkum: #6B0E14;
+    --color-sacred-yellow: #FBBF24;
+    --color-haldi: #FACC15;
+    --color-yellow-light: #FEF08A;
+    --color-ivory: #FFFBEB;
+    --color-night: #0A0102;
+    --color-surface: #1C0205;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Noto Sans Kannada', 'Noto Sans Telugu', 'Noto Sans Devanagari', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background-color: #0A0102;
+    color: #FFFBEB;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Zodiac Rotation */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes reverse-spin-slow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes float-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 120s linear infinite;
+}
+
+.animate-reverse-spin {
+  animation: reverse-spin-slow 160s linear infinite;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.animate-float-gentle {
+  animation: float-gentle 5s ease-in-out infinite;
+}
+
+@keyframes radiant-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px rgba(250, 204, 21, 0.4));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 10px rgba(254, 240, 138, 0.95)) drop-shadow(0 0 20px rgba(234, 179, 8, 0.6));
+    transform: scale(1.03);
+  }
+}
+
+.animate-radiant-glow {
+  animation: radiant-glow 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin-slow,
+  .animate-reverse-spin,
+  .animate-pulse-subtle,
+  .animate-float-gentle {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Custom scrollbar in Sacred Haldi Yellow and Temple Red */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #260307;
+}
+::-webkit-scrollbar-thumb {
+  background: #FBBF24;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FDE047;
+}

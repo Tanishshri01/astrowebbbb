@@ -1,0 +1,6 @@
+{
+  "name": "Astro Kannada | ಪಂಡಿತ್ ಸಚಿನ್ ಶರ್ಮಾ",
+  "description": "ಆಸ್ಟ್ರೋ ಕನ್ನಡ - ಪಂಡಿತ್ ಸಚಿನ್ ಶರ್ಮಾ ಅವರಿಂದ ಸಾಂಪ್ರದಾಯಿಕ ವೈದಿಕ ಜ್ಯೋತಿಷ್ಯ, ಕುಂಡಲಿ, ವಾಸ್ತು ಹಾಗೂ ಆಧ್ಯಾತ್ಮಿಕ ಮಾರ್ಗದರ್ಶನ. WhatsApp / Call: 8151816172",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
