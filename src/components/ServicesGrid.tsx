@@ -29,8 +29,9 @@ import {
   compressImage,
   safeStorageSet,
   safeStorageGet,
-  safeStorageGetAsync,
-  safeStorageRemove
+  safeStorageRemove,
+  findStoredImage,
+  findStoredImageAsync
 } from '../utils/imageStorage';
 
 // Icon mapping helper
@@ -50,46 +51,41 @@ const iconMap: Record<string, React.ReactNode> = {
 
 // Helper to search across all known storage keys for restored service images
 function getCandidateServiceImage(id: string, num?: string): string | null {
-  const keys = [
-    `astro_service_custom_img_${id}`,
+  const numInt = num ? parseInt(num, 10) : null;
+  const aliasKeys = [
     `astro_service_img_${id}`,
     `service_custom_${id}`,
     `service_image_${id}`,
     `astro_service_${id}`,
+    `service_${id}`,
     num ? `astro_service_custom_img_${num}` : '',
     num ? `astro_service_img_${num}` : '',
     num ? `service_${num}` : '',
     num ? `astro_service_slot_${num}` : '',
+    numInt ? `service_${numInt}` : '',
+    numInt ? `astro_service_${numInt}` : '',
   ].filter(Boolean);
 
-  for (const k of keys) {
-    const v = safeStorageGet(k);
-    if (v) return v;
-  }
-  return null;
+  return findStoredImage(`astro_service_custom_img_${id}`, aliasKeys);
 }
 
 async function getCandidateServiceImageAsync(id: string, num?: string): Promise<string | null> {
-  const sync = getCandidateServiceImage(id, num);
-  if (sync) return sync;
-
-  const keys = [
-    `astro_service_custom_img_${id}`,
+  const numInt = num ? parseInt(num, 10) : null;
+  const aliasKeys = [
     `astro_service_img_${id}`,
     `service_custom_${id}`,
     `service_image_${id}`,
     `astro_service_${id}`,
+    `service_${id}`,
     num ? `astro_service_custom_img_${num}` : '',
     num ? `astro_service_img_${num}` : '',
     num ? `service_${num}` : '',
     num ? `astro_service_slot_${num}` : '',
+    numInt ? `service_${numInt}` : '',
+    numInt ? `astro_service_${numInt}` : '',
   ].filter(Boolean);
 
-  for (const k of keys) {
-    const v = await safeStorageGetAsync(k);
-    if (v) return v;
-  }
-  return null;
+  return findStoredImageAsync(`astro_service_custom_img_${id}`, aliasKeys);
 }
 
 export const ServicesGrid: React.FC = () => {
@@ -125,8 +121,23 @@ export const ServicesGrid: React.FC = () => {
       }
     }
     loadAllAsync();
+
+    // Listen to real-time custom image change events
+    const handleStorageChange = () => {
+      const map: Record<string, string | null> = {};
+      t.servicesSection.items.forEach((item) => {
+        map[item.id] = getCandidateServiceImage(item.id, item.number);
+      });
+      setCustomImages(map);
+    };
+
+    window.addEventListener('astro_image_change', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('astro_image_change', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [language, t.servicesSection.items]);
 
@@ -136,11 +147,20 @@ export const ServicesGrid: React.FC = () => {
 
     try {
       setUploadingServiceId(serviceId);
-      // High quality HD canvas compression with small ~45KB footprint
-      const compressed = await compressImage(file, 960, 960, 0.78);
-      // Write to multiple persistent keys in both localStorage AND IndexedDB database
-      safeStorageSet(`astro_service_custom_img_${serviceId}`, compressed);
-      safeStorageSet(`astro_service_img_${serviceId}`, compressed);
+      // High quality HD canvas compression with small ~30KB footprint
+      const compressed = await compressImage(file, 800, 800, 0.72);
+      
+      // Write to multiple persistent keys
+      const keysToSet = [
+        `astro_service_custom_img_${serviceId}`,
+        `astro_service_img_${serviceId}`,
+        `service_custom_${serviceId}`,
+        `service_image_${serviceId}`,
+        `astro_service_${serviceId}`,
+        `service_${serviceId}`,
+      ];
+      keysToSet.forEach((k) => safeStorageSet(k, compressed));
+
       setCustomImages((prev) => ({ ...prev, [serviceId]: compressed }));
       setRecentlySavedId(serviceId);
       setTimeout(() => setRecentlySavedId((curr) => (curr === serviceId ? null : curr)), 3500);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ShieldCheck, 
   Camera, 
@@ -14,81 +14,215 @@ import {
   Download,
   FolderGit2,
   X,
-  Copy
+  Copy,
+  RefreshCw,
+  Upload,
+  Sparkles,
+  Search
 } from 'lucide-react';
 import { useDeveloperMode } from '../context/DeveloperContext';
+import { 
+  safeStorageSet, 
+  safeStorageGet, 
+  compressImage, 
+  idbGetAll, 
+  findStoredImage 
+} from '../utils/imageStorage';
+
+const SERVICE_ITEMS_META = [
+  { id: 'lakshmi-vashikarana', number: '01', title: 'Lakshmi Vashikarana (ಲಕ್ಷ್ಮಿ ವಶೀಕರಣ)', defaultImg: '/images/goddess_lakshmi.jpg' },
+  { id: 'jana-vashikarana', number: '02', title: 'Jana Vashikarana (ಜನ ವಶೀಕರಣ)', defaultImg: '/images/krishna_govardhan.png' },
+  { id: 'dhana-vashikarana', number: '03', title: 'Dhana Vashikarana (ಧನ ವಶೀಕರಣ)', defaultImg: '/images/lord_kubera.jpg' },
+  { id: 'love-relationship-issues', number: '04', title: 'Love & Relationship (ಪ್ರೇಮ ಸಮಸ್ಯೆ)', defaultImg: '/images/radha_krishna.jpg' },
+  { id: 'education-and-studies', number: '05', title: 'Education & Studies (ವಿದ್ಯಾಭ್ಯಾಸ)', defaultImg: '/images/goddess_saraswati.jpg' },
+  { id: 'job-and-career-guidance', number: '06', title: 'Job & Career (ಉದ್ಯೋಗ)', defaultImg: '/images/lord_surya.jpg' },
+  { id: 'financial-problems', number: '07', title: 'Financial Problems (ಆರ್ಥಿಕ ಸಮಸ್ಯೆ)', defaultImg: '/images/lord_ganesha.jpg' },
+  { id: 'enemy-troubles-spiritual-remedy', number: '08', title: 'Enemy Troubles (ಶತ್ರು ಬಾಧೆ)', defaultImg: '/images/protection_hanuman.jpg' },
+  { id: 'business-problems', number: '09', title: 'Business Problems (ವ್ಯಾಪಾರ ಸಮಸ್ಯೆ)', defaultImg: '/images/lord_kubera.jpg' },
+  { id: 'financial-loss-guidance', number: '10', title: 'Financial Loss (ಧನ ನಷ್ಟ)', defaultImg: '/images/krishna_darshan.jpg' },
+  { id: 'domestic-discord-and-family-peace', number: '11', title: 'Family Peace (ಕುಟುಂಬ ಕಲಹ)', defaultImg: '/images/lord_shiva.jpg' },
+  { id: 'homa-and-yajna-guidance', number: '12', title: 'Homa & Yajna (ಹೋಮ ಯಾಗ)', defaultImg: '/images/vedic_yajna.jpg' },
+];
 
 export const DeveloperToolbar: React.FC = () => {
   const { isDevMode, disableDevMode, showToast, toastMessage } = useDeveloperMode();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'manager' | 'guide'>('manager');
+  const [isScanning, setIsScanning] = useState(false);
+  const [uploadingTarget, setUploadingTarget] = useState<string | null>(null);
 
   if (!isDevMode) return null;
 
-  // Scan localStorage for any saved custom photos
+  // Scan localStorage & memory for any saved custom photos
   const getStoredImages = () => {
-    const list: Array<{ name: string; targetFile: string; data: string; description: string }> = [];
+    const list: Array<{ name: string; targetFile: string; data: string; description: string; key: string }> = [];
     if (typeof window === 'undefined') return list;
 
     // Check Pandit portrait
-    const pandit = localStorage.getItem('astro_pandit_custom_portrait');
+    const pandit = localStorage.getItem('astro_pandit_custom_portrait') || safeStorageGet('astro_pandit_custom_portrait');
     if (pandit && pandit.startsWith('data:')) {
       list.push({
         name: 'Pandit Sachin Sharma Portrait',
         targetFile: 'pandit_sachin_sharma.jpg',
         data: pandit,
-        description: 'Main Astrologer Photo in Top Card'
+        description: 'Main Astrologer Photo in Top Card',
+        key: 'astro_pandit_custom_portrait'
       });
     }
 
     // Check Krishna darshan
-    const krishna = localStorage.getItem('astro_krishna_custom_darshan');
+    const krishna = localStorage.getItem('astro_krishna_custom_darshan') || safeStorageGet('astro_krishna_custom_darshan');
     if (krishna && krishna.startsWith('data:')) {
       list.push({
         name: 'Lord Krishna Darshan',
         targetFile: 'krishna_darshan.jpg',
         data: krishna,
-        description: 'Lord Krishna Altar Section'
+        description: 'Lord Krishna Altar Section',
+        key: 'astro_krishna_custom_darshan'
       });
     }
 
     // Check 4 posters
     for (let i = 1; i <= 4; i++) {
-      const poster = localStorage.getItem(`astro_poster_slot_${i}`) || localStorage.getItem(`astro_poster_${i}`);
+      const poster = findStoredImage(`astro_poster_slot_${i}`, [
+        `astro_poster_${i}`,
+        `poster_slot_${i}`,
+        `poster_${i}`,
+        `custom_poster_${i}`,
+      ]);
       if (poster && poster.startsWith('data:')) {
         list.push({
           name: `Special Poster ${i}`,
           targetFile: `poster_${i}.jpg`,
           data: poster,
-          description: `Poster Showcase Slot ${i}`
+          description: `Poster Showcase Slot ${i}`,
+          key: `astro_poster_slot_${i}`
         });
       }
     }
 
     // Check 12 services
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith('astro_service_custom_img_')) {
-        const serviceId = key.replace('astro_service_custom_img_', '');
-        const data = localStorage.getItem(key);
-        if (data && data.startsWith('data:')) {
-          list.push({
-            name: `Service: ${serviceId}`,
-            targetFile: `${serviceId}.jpg`,
-            data,
-            description: `Custom image for service ${serviceId}`
-          });
-        }
+    SERVICE_ITEMS_META.forEach((service) => {
+      const custom = findStoredImage(`astro_service_custom_img_${service.id}`, [
+        `astro_service_img_${service.id}`,
+        `service_custom_${service.id}`,
+        `service_${service.id}`,
+        `astro_service_${service.id}`,
+        `service_${service.number}`,
+        `astro_service_${service.number}`,
+        `service_${parseInt(service.number, 10)}`,
+      ]);
+      if (custom && custom.startsWith('data:')) {
+        list.push({
+          name: service.title,
+          targetFile: `${service.id}.jpg`,
+          data: custom,
+          description: `Service ${service.number}`,
+          key: `astro_service_custom_img_${service.id}`
+        });
       }
-    }
+    });
 
     return list;
   };
 
   const storedImages = getStoredImages();
 
-  // Helper to trigger browser download of base64 image
+  // Deep Scan & Auto-Recover across entire browser storage
+  const handleDeepScanAndRecover = async () => {
+    setIsScanning(true);
+    let recoveredCount = 0;
+
+    try {
+      // 1. Scan all localStorage keys
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+        const val = localStorage.getItem(k);
+        if (!val || !val.startsWith('data:image')) continue;
+
+        const lowerK = k.toLowerCase();
+
+        // Check if matches posters
+        for (let p = 1; p <= 4; p++) {
+          if (lowerK.includes('poster') && lowerK.includes(String(p))) {
+            safeStorageSet(`astro_poster_slot_${p}`, val);
+            safeStorageSet(`astro_poster_${p}`, val);
+            recoveredCount++;
+          }
+        }
+
+        // Check if matches services
+        SERVICE_ITEMS_META.forEach((item) => {
+          if (
+            lowerK.includes(item.id.toLowerCase()) ||
+            lowerK.includes(`service_${item.number}`) ||
+            lowerK.includes(`service_${parseInt(item.number, 10)}`)
+          ) {
+            safeStorageSet(`astro_service_custom_img_${item.id}`, val);
+            safeStorageSet(`astro_service_img_${item.id}`, val);
+            recoveredCount++;
+          }
+        });
+      }
+
+      // 2. Scan all IndexedDB entries
+      const idbData = await idbGetAll();
+      for (const [k, val] of Object.entries(idbData)) {
+        if (!val || !val.startsWith('data:image')) continue;
+        const lowerK = k.toLowerCase();
+
+        for (let p = 1; p <= 4; p++) {
+          if (lowerK.includes('poster') && lowerK.includes(String(p))) {
+            safeStorageSet(`astro_poster_slot_${p}`, val);
+            recoveredCount++;
+          }
+        }
+
+        SERVICE_ITEMS_META.forEach((item) => {
+          if (lowerK.includes(item.id.toLowerCase()) || lowerK.includes(`service_${item.number}`)) {
+            safeStorageSet(`astro_service_custom_img_${item.id}`, val);
+            recoveredCount++;
+          }
+        });
+      }
+
+      showToast(`Scan complete! Recovered and synchronized ${recoveredCount} custom photo records.`);
+    } catch (err) {
+      console.error('Scan error:', err);
+      showToast('Scan complete.');
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  // Direct upload for any item from the manager modal
+  const handleDirectUpload = async (targetType: 'service' | 'poster', targetId: string | number, file: File) => {
+    try {
+      const targetKey = `${targetType}-${targetId}`;
+      setUploadingTarget(targetKey);
+
+      if (targetType === 'service') {
+        const compressed = await compressImage(file, 800, 800, 0.72);
+        safeStorageSet(`astro_service_custom_img_${targetId}`, compressed);
+        safeStorageSet(`astro_service_img_${targetId}`, compressed);
+        safeStorageSet(`service_${targetId}`, compressed);
+        showToast(`Updated photo for service ${targetId}!`);
+      } else {
+        const compressed = await compressImage(file, 800, 1060, 0.72);
+        safeStorageSet(`astro_poster_slot_${targetId}`, compressed);
+        safeStorageSet(`astro_poster_${targetId}`, compressed);
+        safeStorageSet(`poster_${targetId}`, compressed);
+        showToast(`Updated Poster ${targetId}!`);
+      }
+    } catch (err) {
+      console.error('Upload error:', err);
+    } finally {
+      setUploadingTarget(null);
+    }
+  };
+
   const downloadImage = (dataUrl: string, fileName: string) => {
     const link = document.createElement('a');
     link.href = dataUrl;
@@ -97,13 +231,6 @@ export const DeveloperToolbar: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     showToast(`Downloaded ${fileName}! Drop it in GitHub public/images/`);
-  };
-
-  const copyToClipboard = (text: string, key: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
-    showToast('Copied to clipboard!');
   };
 
   return (
@@ -116,22 +243,22 @@ export const DeveloperToolbar: React.FC = () => {
         </div>
       )}
 
-      {/* Export / Permanent GitHub Sync Modal */}
+      {/* Photo Manager & Permanent GitHub Sync Modal */}
       {showExportModal && (
         <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
           onClick={() => setShowExportModal(false)}
         >
           <div
-            className="w-full max-w-2xl bg-gradient-to-b from-[#240306] via-[#160204] to-[#0A0102] border-2 border-[#FACC15] rounded-3xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto"
+            className="w-full max-w-4xl bg-gradient-to-b from-[#240306] via-[#160204] to-[#0A0102] border-2 border-[#FACC15] rounded-3xl p-5 sm:p-6 shadow-2xl relative max-h-[92vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#FACC15]/40">
+            <div className="flex items-center justify-between pb-3 mb-3 border-b border-[#FACC15]/40 shrink-0">
               <div className="flex items-center gap-2">
                 <FolderGit2 className="w-5 h-5 text-[#FACC15]" />
                 <h3 className="text-base sm:text-lg font-black text-[#FEF08A]">
-                  Permanent Photos Guide (GitHub & Vercel)
+                  Photo Manager & Permanent GitHub Tools
                 </h3>
               </div>
               <button
@@ -142,114 +269,246 @@ export const DeveloperToolbar: React.FC = () => {
               </button>
             </div>
 
-            <p className="text-xs text-[#FFFBEB]/80 mb-5 leading-relaxed">
-              Vercel builds your live website from files saved inside your <strong className="text-[#FEF08A]">GitHub repository</strong>. 
-              To make your photos 100% permanent for all visitors on any device, follow either of these 2 easy methods:
-            </p>
-
-            {/* Method 1: Download from this browser and drop in GitHub */}
-            <div className="p-4 rounded-2xl bg-[#0D0102] border border-[#FACC15]/40 mb-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-6 h-6 rounded-full bg-[#FACC15] text-[#240306] font-black text-xs flex items-center justify-center">1</span>
-                  <span className="text-xs sm:text-sm font-bold text-[#FEF08A]">
-                    Download Photos Uploaded In This Browser
-                  </span>
-                </div>
-                <span className="text-[11px] text-[#4ADE80] font-semibold">
-                  {storedImages.length} custom photo(s) found
-                </span>
+            {/* Mode Tabs & Deep Scan Button */}
+            <div className="flex items-center justify-between gap-2 pb-3 mb-3 border-b border-[#FACC15]/20 shrink-0 flex-wrap">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('manager')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    activeTab === 'manager'
+                      ? 'bg-[#FACC15] text-[#240306]'
+                      : 'bg-[#1C0204] text-[#FEF08A] border border-[#FACC15]/40 hover:bg-[#2A0307]'
+                  }`}
+                >
+                  📸 Photos Manager & Direct Upload ({storedImages.length} custom detected)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('guide')}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
+                    activeTab === 'guide'
+                      ? 'bg-[#FACC15] text-[#240306]'
+                      : 'bg-[#1C0204] text-[#FEF08A] border border-[#FACC15]/40 hover:bg-[#2A0307]'
+                  }`}
+                >
+                  📖 Permanent GitHub Guide
+                </button>
               </div>
 
-              {storedImages.length > 0 ? (
-                <div className="space-y-2 mt-2">
-                  {storedImages.map((img) => (
-                    <div key={img.targetFile} className="flex items-center justify-between p-2.5 rounded-xl bg-[#180204] border border-[#FACC15]/20 gap-3">
-                      <div className="flex items-center gap-2.5 overflow-hidden">
-                        <img src={img.data} alt={img.name} className="w-10 h-10 object-cover rounded-lg border border-[#FACC15]/40 shrink-0" />
-                        <div>
-                          <div className="text-xs font-bold text-[#FEF08A]">{img.name}</div>
-                          <div className="text-[10px] text-[#FFFBEB]/60 font-mono">File: public/images/{img.targetFile}</div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => downloadImage(img.data, img.targetFile)}
-                        className="px-3 py-1.5 bg-[#FACC15] hover:bg-[#FEF08A] text-[#1E0204] text-xs font-extrabold rounded-lg flex items-center gap-1.5 transition shrink-0 cursor-pointer shadow"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        <span>Download</span>
-                      </button>
+              <button
+                type="button"
+                onClick={handleDeepScanAndRecover}
+                disabled={isScanning}
+                className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold flex items-center gap-1.5 transition active:scale-95 shadow cursor-pointer"
+                title="Scan all browser memory and IndexedDB to restore any lost photos"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isScanning ? 'animate-spin' : ''}`} />
+                <span>{isScanning ? 'Scanning Browser...' : '🔍 Auto-Recover Lost Photos'}</span>
+              </button>
+            </div>
+
+            {/* Scrollable Modal Content */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-4">
+              {activeTab === 'manager' ? (
+                <>
+                  {/* 4 Special Posters Manager */}
+                  <div className="p-4 rounded-2xl bg-[#0D0102] border border-[#FACC15]/40">
+                    <h4 className="text-xs sm:text-sm font-black text-[#FEF08A] mb-3 flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-[#FACC15]" />
+                      <span>4 Special Posters (ವಿಶೇಷ ಪೋಸ್ಟರ್‌ಗಳು)</span>
+                    </h4>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                      {[1, 2, 3, 4].map((slotId) => {
+                        const current = findStoredImage(`astro_poster_slot_${slotId}`, [
+                          `astro_poster_${slotId}`,
+                          `poster_${slotId}`,
+                        ]);
+                        const isUploading = uploadingTarget === `poster-${slotId}`;
+
+                        return (
+                          <div
+                            key={slotId}
+                            className="p-3 rounded-xl bg-[#140103] border border-[#FACC15]/30 flex flex-col items-center text-center gap-2"
+                          >
+                            <span className="text-xs font-bold text-[#FEF08A]">Poster Slot {slotId}</span>
+                            <div className="w-full aspect-[3/4] max-h-36 rounded-lg overflow-hidden bg-[#0A0102] border border-[#FACC15]/40 relative">
+                              <img
+                                src={current || `/images/poster_${slotId}.jpg`}
+                                alt={`Poster ${slotId}`}
+                                className="w-full h-full object-cover"
+                              />
+                              {current && (
+                                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-emerald-950/90 border border-emerald-400 text-emerald-300 text-[9px] font-bold">
+                                  Custom
+                                </span>
+                              )}
+                            </div>
+
+                            <label
+                              htmlFor={`modal-upload-poster-${slotId}`}
+                              className="w-full py-1.5 bg-[#FACC15] hover:bg-[#FEF08A] text-[#1E0204] text-xs font-black rounded-lg flex items-center justify-center gap-1 cursor-pointer transition active:scale-95 shadow"
+                            >
+                              <Upload className="w-3 h-3" />
+                              <span>{isUploading ? 'Uploading...' : current ? 'Change Photo' : 'Upload Photo'}</span>
+                            </label>
+                            <input
+                              type="file"
+                              id={`modal-upload-poster-${slotId}`}
+                              accept="image/*"
+                              className="sr-only"
+                              onChange={(e) => {
+                                const f = e.target.files?.[0];
+                                if (f) handleDirectUpload('poster', slotId, f);
+                              }}
+                            />
+
+                            {current && (
+                              <button
+                                type="button"
+                                onClick={() => downloadImage(current, `poster_${slotId}.jpg`)}
+                                className="text-[11px] text-[#FACC15] hover:underline flex items-center gap-1 cursor-pointer"
+                              >
+                                <Download className="w-3 h-3" />
+                                <span>Download for GitHub</span>
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
-                </div>
+                  </div>
+
+                  {/* 12 Services Photos Manager */}
+                  <div className="p-4 rounded-2xl bg-[#0D0102] border border-[#FACC15]/40">
+                    <h4 className="text-xs sm:text-sm font-black text-[#FEF08A] mb-3 flex items-center gap-2">
+                      <Camera className="w-4 h-4 text-[#FACC15]" />
+                      <span>12 Vedic Services Photos (೧೨ ಜ್ಯೋತಿಷ್ಯ ಸೇವೆಗಳು)</span>
+                    </h4>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {SERVICE_ITEMS_META.map((item) => {
+                        const current = findStoredImage(`astro_service_custom_img_${item.id}`, [
+                          `astro_service_img_${item.id}`,
+                          `service_custom_${item.id}`,
+                          `service_${item.id}`,
+                        ]);
+                        const isUploading = uploadingTarget === `service-${item.id}`;
+
+                        return (
+                          <div
+                            key={item.id}
+                            className="p-3 rounded-xl bg-[#140103] border border-[#FACC15]/30 flex flex-col justify-between gap-2"
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#0A0102] border border-[#FACC15]/40 shrink-0 relative">
+                                <img
+                                  src={current || item.defaultImg}
+                                  alt={item.title}
+                                  className="w-full h-full object-cover"
+                                />
+                                {current && (
+                                  <span className="absolute bottom-0 inset-x-0 bg-emerald-950/90 text-emerald-300 text-[8px] font-bold text-center">
+                                    Custom
+                                  </span>
+                                )}
+                              </div>
+                              <div className="overflow-hidden">
+                                <div className="text-xs font-bold text-[#FEF08A] line-clamp-1">{item.title}</div>
+                                <div className="text-[10px] text-[#FFFBEB]/60 font-mono">Service {item.number}</div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2 pt-1 border-t border-[#FACC15]/20">
+                              <label
+                                htmlFor={`modal-upload-service-${item.id}`}
+                                className="flex-1 py-1.5 bg-[#FACC15] hover:bg-[#FEF08A] text-[#1E0204] text-[11px] font-black rounded-lg flex items-center justify-center gap-1 cursor-pointer transition active:scale-95 shadow"
+                              >
+                                <Upload className="w-3 h-3" />
+                                <span>{isUploading ? 'Uploading...' : current ? 'Change' : 'Upload'}</span>
+                              </label>
+                              <input
+                                type="file"
+                                id={`modal-upload-service-${item.id}`}
+                                accept="image/*"
+                                className="sr-only"
+                                onChange={(e) => {
+                                  const f = e.target.files?.[0];
+                                  if (f) handleDirectUpload('service', item.id, f);
+                                }}
+                              />
+
+                              {current && (
+                                <button
+                                  type="button"
+                                  onClick={() => downloadImage(current, `${item.id}.jpg`)}
+                                  className="p-1.5 rounded-lg bg-[#2A0307] hover:bg-[#3D050A] text-[#FEF08A] border border-[#FACC15]/40 cursor-pointer"
+                                  title="Download for GitHub"
+                                >
+                                  <Download className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </>
               ) : (
-                <div className="p-3 rounded-xl bg-[#140103] border border-dashed border-[#FACC15]/30 text-center">
-                  <p className="text-xs text-[#FFFBEB]/60">
-                    No custom photos detected in this specific browser yet. You can upload them below or drop your images directly into GitHub!
-                  </p>
+                /* Permanent GitHub Guide Tab */
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-[#0D0102] border border-[#FACC15]/40 space-y-3">
+                    <h4 className="text-sm font-black text-[#FEF08A]">
+                      How to Make All Photos Permanent on GitHub & Vercel
+                    </h4>
+                    <p className="text-xs text-[#FFFBEB]/80 leading-relaxed">
+                      Browser memory is temporary. To make photos permanent for all visitors on mobile, desktop, and all networks:
+                    </p>
+
+                    <ol className="text-xs text-[#FFFBEB]/85 space-y-2.5 pl-4 list-decimal leading-relaxed">
+                      <li>
+                        Download your customized photos using the <strong>"Download for GitHub"</strong> buttons in the Photos Manager tab.
+                      </li>
+                      <li>
+                        Open your repository on GitHub:{' '}
+                        <a
+                          href="https://github.com/Tanishshri01/astrowebbbb/tree/main/public/images"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#FACC15] underline font-bold inline-flex items-center gap-1"
+                        >
+                          <span>github.com/Tanishshri01/astrowebbbb/public/images</span>
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </li>
+                      <li>
+                        Click <strong>"Add file"</strong> (top-right) ➔ <strong>"Upload files"</strong>.
+                      </li>
+                      <li>
+                        Drag & drop the downloaded files (e.g. <code>pandit_sachin_sharma.jpg</code>, <code>poster_1.jpg</code>, etc.).
+                      </li>
+                      <li>
+                        Click <strong>"Commit changes"</strong>. Vercel will rebuild and your photos will be permanent for everyone worldwide!
+                      </li>
+                    </ol>
+                  </div>
                 </div>
               )}
             </div>
 
-            {/* Method 2: How to drop photos directly on GitHub.com */}
-            <div className="p-4 rounded-2xl bg-[#0D0102] border border-[#FACC15]/40 mb-4 space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#FACC15] text-[#240306] font-black text-xs flex items-center justify-center">2</span>
-                <span className="text-xs sm:text-sm font-bold text-[#FEF08A]">
-                  Upload Files to GitHub (Takes 60 seconds)
-                </span>
-              </div>
-
-              <ol className="text-xs text-[#FFFBEB]/85 space-y-2 pl-3 list-decimal leading-relaxed">
-                <li>
-                  Open your repository's images folder on GitHub:{' '}
-                  <a
-                    href="https://github.com/Tanishshri01/astrowebbbb/tree/main/public/images"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#FACC15] underline font-bold inline-flex items-center gap-1"
-                  >
-                    <span>github.com/Tanishshri01/astrowebbbb/public/images</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </li>
-                <li>
-                  Click <strong className="text-[#FEF08A]">"Add file"</strong> (top right) ➔ Select <strong className="text-[#FEF08A]">"Upload files"</strong>.
-                </li>
-                <li>
-                  Drag & drop your photos with these exact file names:
-                  <ul className="list-disc pl-5 mt-1 space-y-1 font-mono text-[11px] text-[#FEF08A]">
-                    <li><code>pandit_sachin_sharma.jpg</code> (Astrologer portrait)</li>
-                    <li><code>poster_1.jpg</code>, <code>poster_2.jpg</code>, <code>poster_3.jpg</code>, <code>poster_4.jpg</code> (4 Posters)</li>
-                    <li>Or service images: <code>goddess_lakshmi.jpg</code>, <code>radha_krishna.jpg</code>, etc.</li>
-                  </ul>
-                </li>
-                <li>
-                  Click the green <strong className="text-[#4ADE80]">"Commit changes"</strong> button.
-                </li>
-                <li>
-                  <strong>Done!</strong> Vercel will automatically re-build and deploy your photos in under 1 minute.
-                </li>
-              </ol>
-            </div>
-
-            {/* Method 3: Or send them in chat */}
-            <div className="p-3.5 rounded-2xl bg-[#140103] border border-emerald-500/40 flex items-center justify-between gap-3">
-              <div className="text-left">
-                <div className="text-xs font-bold text-emerald-300">Method 3: Share Image URLs in Chat</div>
-                <div className="text-[11px] text-[#FFFBEB]/70">
-                  You can also paste any public image link (Imgur, Google Drive public link, or Postimages) here in chat, and I will commit them directly to GitHub for you!
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 text-center">
+            {/* Footer */}
+            <div className="pt-3 mt-3 border-t border-[#FACC15]/30 flex items-center justify-between shrink-0">
+              <span className="text-[11px] text-[#FFFBEB]/60">
+                Any photo uploaded here updates the website immediately.
+              </span>
               <button
                 type="button"
                 onClick={() => setShowExportModal(false)}
-                className="px-6 py-2 rounded-xl bg-gradient-to-r from-[#FEF08A] to-[#FACC15] text-[#240306] text-xs font-black transition active:scale-95 shadow"
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#FEF08A] to-[#FACC15] text-[#240306] text-xs font-black transition active:scale-95 shadow cursor-pointer"
               >
-                Got It! Close Guide
+                Done
               </button>
             </div>
           </div>
@@ -284,11 +543,10 @@ export const DeveloperToolbar: React.FC = () => {
                   type="button"
                   onClick={() => setShowExportModal(true)}
                   className="px-2.5 py-1.5 rounded-lg bg-emerald-950/90 hover:bg-emerald-900 border border-emerald-500/80 text-emerald-200 text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
-                  title="Make photos permanent on GitHub & Vercel"
+                  title="Open Photos Manager & Recovery Center"
                 >
                   <FolderGit2 className="w-3.5 h-3.5 text-emerald-400" />
-                  <span className="hidden md:inline">Make Photos Permanent</span>
-                  <span className="md:hidden">Permanent</span>
+                  <span className="font-extrabold text-amber-300">📸 Photos Manager</span>
                 </button>
 
                 <a
@@ -297,8 +555,7 @@ export const DeveloperToolbar: React.FC = () => {
                   title="Scroll to Services to edit photos"
                 >
                   <Camera className="w-3.5 h-3.5 text-[#FACC15]" />
-                  <span className="hidden md:inline">Services Photos</span>
-                  <span className="md:hidden">Services</span>
+                  <span className="hidden md:inline">Services</span>
                 </a>
 
                 <a
@@ -307,8 +564,7 @@ export const DeveloperToolbar: React.FC = () => {
                   title="Scroll to Posters section to edit posters"
                 >
                   <ImageIcon className="w-3.5 h-3.5 text-[#FACC15]" />
-                  <span className="hidden md:inline">Special Posters</span>
-                  <span className="md:hidden">Posters</span>
+                  <span className="hidden md:inline">Posters</span>
                 </a>
 
                 <a
@@ -317,8 +573,7 @@ export const DeveloperToolbar: React.FC = () => {
                   title="Scroll to Astrologer Card"
                 >
                   <User className="w-3.5 h-3.5 text-[#FACC15]" />
-                  <span className="hidden md:inline">Pandit Portrait</span>
-                  <span className="md:hidden">Portrait</span>
+                  <span className="hidden md:inline">Portrait</span>
                 </a>
 
                 <a
@@ -327,8 +582,7 @@ export const DeveloperToolbar: React.FC = () => {
                   title="Scroll to Blog section"
                 >
                   <FileText className="w-3.5 h-3.5 text-[#FACC15]" />
-                  <span className="hidden md:inline">Write Blog</span>
-                  <span className="md:hidden">Blog</span>
+                  <span className="hidden md:inline">Blog</span>
                 </a>
 
                 <button
@@ -338,7 +592,7 @@ export const DeveloperToolbar: React.FC = () => {
                   title="Exit Developer Mode to view website as a normal visitor"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Exit Mode</span>
+                  <span className="hidden sm:inline">Exit</span>
                 </button>
               </div>
             )}

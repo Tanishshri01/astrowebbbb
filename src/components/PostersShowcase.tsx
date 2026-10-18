@@ -2,7 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Upload, Trash2, Maximize2, X, RefreshCw, Loader2, ShieldAlert } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useDeveloperMode } from '../context/DeveloperContext';
-import { compressImage, safeStorageSet, safeStorageGet, safeStorageGetAsync, safeStorageRemove } from '../utils/imageStorage';
+import {
+  compressImage,
+  safeStorageSet,
+  safeStorageGet,
+  safeStorageGetAsync,
+  safeStorageRemove,
+  findStoredImage,
+  findStoredImageAsync
+} from '../utils/imageStorage';
 
 interface PosterSlot {
   id: number;
@@ -87,15 +95,16 @@ export const PostersShowcase: React.FC = () => {
   const { language } = useLanguage();
   const { isDevMode } = useDeveloperMode();
 
-  // Load saved posters safely from storage synchronously
   const [posters, setPosters] = useState<Record<number, string | null>>(() => {
     const saved: Record<number, string | null> = {};
     DEFAULT_POSTER_SLOTS.forEach((slot) => {
-      saved[slot.id] =
-        safeStorageGet(`astro_poster_slot_${slot.id}`) ||
-        safeStorageGet(`astro_poster_${slot.id}`) ||
-        safeStorageGet(`poster_slot_${slot.id}`) ||
-        null;
+      saved[slot.id] = findStoredImage(`astro_poster_slot_${slot.id}`, [
+        `astro_poster_${slot.id}`,
+        `poster_slot_${slot.id}`,
+        `poster_${slot.id}`,
+        `custom_poster_${slot.id}`,
+        `poster${slot.id}`,
+      ]);
     });
     return saved;
   });
@@ -106,17 +115,15 @@ export const PostersShowcase: React.FC = () => {
     async function loadPostersAsync() {
       const updates: Record<number, string> = {};
       for (const slot of DEFAULT_POSTER_SLOTS) {
-        const candidateKeys = [
-          `astro_poster_slot_${slot.id}`,
+        const stored = await findStoredImageAsync(`astro_poster_slot_${slot.id}`, [
           `astro_poster_${slot.id}`,
           `poster_slot_${slot.id}`,
-        ];
-        for (const k of candidateKeys) {
-          const stored = await safeStorageGetAsync(k);
-          if (stored) {
-            updates[slot.id] = stored;
-            break;
-          }
+          `poster_${slot.id}`,
+          `custom_poster_${slot.id}`,
+          `poster${slot.id}`,
+        ]);
+        if (stored) {
+          updates[slot.id] = stored;
         }
       }
       if (isMounted && Object.keys(updates).length > 0) {
@@ -124,8 +131,29 @@ export const PostersShowcase: React.FC = () => {
       }
     }
     loadPostersAsync();
+
+    // Listen to real-time custom image change events
+    const handleStorageChange = () => {
+      const saved: Record<number, string | null> = {};
+      DEFAULT_POSTER_SLOTS.forEach((slot) => {
+        saved[slot.id] = findStoredImage(`astro_poster_slot_${slot.id}`, [
+          `astro_poster_${slot.id}`,
+          `poster_slot_${slot.id}`,
+          `poster_${slot.id}`,
+          `custom_poster_${slot.id}`,
+          `poster${slot.id}`,
+        ]);
+      });
+      setPosters(saved);
+    };
+
+    window.addEventListener('astro_image_change', handleStorageChange);
+    window.addEventListener('storage', handleStorageChange);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('astro_image_change', handleStorageChange);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
@@ -180,9 +208,19 @@ export const PostersShowcase: React.FC = () => {
 
     try {
       setUploadingSlot(slotId);
-      const compressedBase64 = await compressImage(file, 1080, 1080, 0.78);
-      safeStorageSet(`astro_poster_slot_${slotId}`, compressedBase64);
-      safeStorageSet(`astro_poster_${slotId}`, compressedBase64);
+      // High quality HD canvas compression with small ~35KB footprint
+      const compressedBase64 = await compressImage(file, 800, 1060, 0.72);
+      
+      const posterKeys = [
+        `astro_poster_slot_${slotId}`,
+        `astro_poster_${slotId}`,
+        `poster_slot_${slotId}`,
+        `poster_${slotId}`,
+        `custom_poster_${slotId}`,
+        `poster${slotId}`,
+      ];
+      posterKeys.forEach((k) => safeStorageSet(k, compressedBase64));
+
       setPosters((prev) => ({ ...prev, [slotId]: compressedBase64 }));
     } catch (err) {
       console.error(`Failed to upload poster for slot ${slotId}:`, err);
@@ -195,8 +233,15 @@ export const PostersShowcase: React.FC = () => {
   };
 
   const handleRemovePoster = (slotId: number) => {
-    safeStorageRemove(`astro_poster_slot_${slotId}`);
-    safeStorageRemove(`astro_poster_${slotId}`);
+    const posterKeys = [
+      `astro_poster_slot_${slotId}`,
+      `astro_poster_${slotId}`,
+      `poster_slot_${slotId}`,
+      `poster_${slotId}`,
+      `custom_poster_${slotId}`,
+      `poster${slotId}`,
+    ];
+    posterKeys.forEach((k) => safeStorageRemove(k));
     setPosters((prev) => ({ ...prev, [slotId]: null }));
     const el = fileInputRefs.current[slotId] || (document.getElementById(`poster-file-input-${slotId}`) as HTMLInputElement);
     if (el) {

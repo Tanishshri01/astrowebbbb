@@ -1,7 +1,7 @@
 /**
- * Robust Image Storage & Compression for Astro Kannada
- * Uses IndexedDB for permanent unlimited storage + localStorage for instant synchronous cache,
- * with canvas compression to ensure uploaded service photos are NEVER lost or removed across refreshes.
+ * Robust Image Storage & Universal Recovery for Astro Kannada
+ * Uses IndexedDB + localStorage + memory cache with lightweight canvas compression (~25-45KB)
+ * to ensure all 12 services and 4 posters are reliably stored, recovered, and rendered.
  */
 
 const DB_NAME = 'AstroKannadaDB';
@@ -42,6 +42,32 @@ export async function idbGet(key: string): Promise<string | null> {
   }
 }
 
+export async function idbGetAll(): Promise<Record<string, string>> {
+  try {
+    const db = await openDB();
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const items: Record<string, string> = {};
+      const req = store.openCursor();
+      req.onsuccess = (e) => {
+        const cursor = (e.target as IDBRequest<IDBCursorWithValue>).result;
+        if (cursor) {
+          if (typeof cursor.value === 'string') {
+            items[String(cursor.key)] = cursor.value;
+          }
+          cursor.continue();
+        } else {
+          resolve(items);
+        }
+      };
+      req.onerror = () => resolve(items);
+    });
+  } catch {
+    return {};
+  }
+}
+
 export async function idbSet(key: string, value: string): Promise<boolean> {
   try {
     const db = await openDB();
@@ -72,13 +98,13 @@ export async function idbRemove(key: string): Promise<void> {
 const memoryStore: Record<string, string> = {};
 
 /**
- * Compresses an image file client-side to ~35-70KB while preserving sharp HD resolution.
+ * Compresses an image file client-side to crisp ~25-45KB so 20+ images comfortably fit in localStorage.
  */
 export async function compressImage(
   file: File,
-  maxWidth = 960,
-  maxHeight = 960,
-  quality = 0.78
+  maxWidth = 800,
+  maxHeight = 800,
+  quality = 0.72
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -136,16 +162,23 @@ export async function compressImage(
  */
 export function safeStorageSet(key: string, value: string): boolean {
   memoryStore[key] = value;
-  // Always asynchronously persist to IndexedDB (virtually unlimited browser storage)
+  
+  // Persist to IndexedDB
   idbSet(key, value).catch(() => {});
 
+  // Persist to localStorage
   try {
     localStorage.setItem(key, value);
-    return true;
   } catch (err) {
     console.warn(`localStorage quota exceeded for ${key}, persisted via IndexedDB`, err);
-    return true;
   }
+
+  // Notify any listening components
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('astro_image_change', { detail: { key, value } }));
+  }
+
+  return true;
 }
 
 /**
@@ -157,7 +190,7 @@ export function safeStorageGet(key: string): string | null {
   }
   try {
     const val = localStorage.getItem(key);
-    if (val) {
+    if (val && (val.startsWith('data:') || val.startsWith('/') || val.startsWith('http'))) {
       memoryStore[key] = val;
       return val;
     }
@@ -178,6 +211,9 @@ export function safeStorageRemove(key: string): void {
   } catch {
     // ignore
   }
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('astro_image_change', { detail: { key, value: null } }));
+  }
 }
 
 /**
@@ -197,5 +233,87 @@ export async function safeStorageGetAsync(key: string): Promise<string | null> {
     }
     return idbVal;
   }
+  return null;
+}
+
+/**
+ * Universal synchronous search for an image across multiple alias keys and fuzzy localStorage matching
+ */
+export function findStoredImage(primaryKey: string, aliasKeys: string[] = []): string | null {
+  // 1. Check primary key
+  const direct = safeStorageGet(primaryKey);
+  if (direct) return direct;
+
+  // 2. Check alias keys
+  for (const alias of aliasKeys) {
+    if (!alias) continue;
+    const v = safeStorageGet(alias);
+    if (v) return v;
+  }
+
+  // 3. Fuzzy search in localStorage
+  if (typeof window !== 'undefined') {
+    try {
+      const keysToSearch = [primaryKey, ...aliasKeys].filter(Boolean);
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+
+        // Check if any search term matches this key
+        for (const term of keysToSearch) {
+          const cleanTerm = term.replace(/^(astro_|service_|custom_|img_)/, '').toLowerCase();
+          if (cleanTerm && k.toLowerCase().includes(cleanTerm)) {
+            const val = localStorage.getItem(k);
+            if (val && val.startsWith('data:image')) {
+              memoryStore[primaryKey] = val;
+              return val;
+            }
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Universal asynchronous search including IndexedDB
+ */
+export async function findStoredImageAsync(primaryKey: string, aliasKeys: string[] = []): Promise<string | null> {
+  const sync = findStoredImage(primaryKey, aliasKeys);
+  if (sync) return sync;
+
+  // Check IndexedDB direct
+  const idbVal = await safeStorageGetAsync(primaryKey);
+  if (idbVal) return idbVal;
+
+  for (const alias of aliasKeys) {
+    if (!alias) continue;
+    const aVal = await safeStorageGetAsync(alias);
+    if (aVal) return aVal;
+  }
+
+  // Check all IndexedDB items
+  const allIdb = await idbGetAll();
+  const searchTerms = [primaryKey, ...aliasKeys].map((t) => t.replace(/^(astro_|service_|custom_|img_)/, '').toLowerCase()).filter(Boolean);
+
+  for (const [k, val] of Object.entries(allIdb)) {
+    if (!val || !val.startsWith('data:image')) continue;
+    for (const term of searchTerms) {
+      if (k.toLowerCase().includes(term)) {
+        memoryStore[primaryKey] = val;
+        try {
+          localStorage.setItem(primaryKey, val);
+        } catch {
+          // ignore
+        }
+        return val;
+      }
+    }
+  }
+
   return null;
 }
