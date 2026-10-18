@@ -11,7 +11,7 @@ export interface ServiceImageMeta {
 
 export const serviceImages: Record<string, ServiceImageMeta> = {
   'lakshmi-vashikarana': {
-    src: '/images/goddess_lakshmi.jpg',
+    src: '/images/lakshmi-vashikarana.jpg',
     alt: 'Goddess Mahalakshmi Aradhana - Wealth & Auspicious Prosperity',
     fallbackIcon: 'Coins'
   },

@@ -24,7 +24,7 @@ const DEFAULT_POSTER_SLOTS: PosterSlot[] = [
   {
     id: 1,
     title: 'Poster 1',
-    defaultPath: '/images/goddess_lakshmi.jpg',
+    defaultPath: '/images/poster_1.jpg',
     devotionalTitle: {
       kn: 'ಶ್ರೀ ಮಹಾಲಕ್ಷ್ಮಿ ಧನ ಪ್ರಾಪ್ತಿ ಆರಾಧನೆ',
       en: 'Sri Mahalakshmi Prosperity Puja',
@@ -41,7 +41,7 @@ const DEFAULT_POSTER_SLOTS: PosterSlot[] = [
   {
     id: 2,
     title: 'Poster 2',
-    defaultPath: '/images/radha_krishna.jpg',
+    defaultPath: '/images/poster_2.jpg',
     devotionalTitle: {
       kn: 'ರಾಧಾ ಕೃಷ್ಣ ಪ್ರೇಮ & ದಾಂಪತ್ಯ ಶಾಂತಿ',
       en: 'Radha Krishna Divine Harmony',
@@ -58,7 +58,7 @@ const DEFAULT_POSTER_SLOTS: PosterSlot[] = [
   {
     id: 3,
     title: 'Poster 3',
-    defaultPath: '/images/protection_hanuman.jpg',
+    defaultPath: '/images/poster_3.jpg',
     devotionalTitle: {
       kn: 'ಸಂಕಟಮೋಚನ ಹನುಮದ್ ರಕ್ಷಾ ಕವಚ',
       en: 'Sankatmochan Hanuman Shield',
@@ -75,7 +75,7 @@ const DEFAULT_POSTER_SLOTS: PosterSlot[] = [
   {
     id: 4,
     title: 'Poster 4',
-    defaultPath: '/images/vedic_yajna.jpg',
+    defaultPath: '/images/poster_4.jpg',
     devotionalTitle: {
       kn: 'ಪವಿತ್ರ ವೇದ ಮಹಾ ಯಾಗ & ಶಾಂತಿ ಹೋಮ',
       en: 'Sacred Vedic Maha Homa Ritual',
