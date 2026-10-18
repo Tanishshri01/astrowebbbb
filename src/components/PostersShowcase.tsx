@@ -342,6 +342,12 @@ export const PostersShowcase: React.FC = () => {
                     src={currentPoster}
                     alt={slotTitle}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-103 cursor-pointer"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.src.endsWith('/images/krishna_darshan.jpg')) {
+                        target.src = '/images/krishna_darshan.jpg';
+                      }
+                    }}
                     onClick={() => setActiveFullscreenPoster({ id: slot.id, url: currentPoster, title: slotTitle })}
                   />
 
@@ -400,13 +406,13 @@ export const PostersShowcase: React.FC = () => {
                   {/* Developer Mode ONLY Indicator in footer */}
                   {isDevMode && (
                     <div className="mt-2 pt-2 border-t border-[#FACC15]/20 w-full flex items-center justify-between text-[11px]">
-                      <span className="text-amber-400 font-mono text-[10px]">Dev Slot {slot.id}</span>
+                      <span className="text-emerald-400 font-mono text-[10px]">Dev Slot {slot.id} • Active</span>
                       <label
                         htmlFor={`poster-file-input-${slot.id}`}
                         className="text-[#FACC15] hover:text-[#FFFFFF] underline font-bold cursor-pointer flex items-center gap-1 select-none"
                       >
                         <Upload className="w-3 h-3" />
-                        <span>{hasCustom ? text.changeBtn : `+ ${text.addBtn}`}</span>
+                        <span>{text.changeBtn}</span>
                       </label>
                     </div>
                   )}

@@ -201,7 +201,7 @@ export const ServicesGrid: React.FC = () => {
           {t.servicesSection.items.map((service) => {
             const icon = iconMap[service.iconName] || <Coins className="w-5 h-5 text-[#FACC15]" />;
             const imageMeta = serviceImages[service.id];
-            const currentImg = customImages[service.id] || imageMeta?.src || '/images/krishna_darshan.jpg';
+            const currentImg = customImages[service.id] || imageMeta?.src || `/images/${service.id}.jpg`;
             const hasCustom = Boolean(customImages[service.id]);
 
             return (
@@ -227,6 +227,12 @@ export const ServicesGrid: React.FC = () => {
                     alt={imageMeta?.alt || service.title}
                     loading="lazy"
                     className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-500 cursor-pointer"
+                    onError={(e) => {
+                      const target = e.currentTarget;
+                      if (!target.src.endsWith('/images/krishna_darshan.jpg')) {
+                        target.src = '/images/krishna_darshan.jpg';
+                      }
+                    }}
                     onClick={() => {
                       if (isDevMode) {
                         const input = document.getElementById(`service-file-input-${service.id}`) as HTMLInputElement;
@@ -256,9 +262,7 @@ export const ServicesGrid: React.FC = () => {
                         <span>
                           {uploadingServiceId === service.id
                             ? 'Uploading...'
-                            : hasCustom
-                            ? (language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಿ' : 'Change Photo')
-                            : (language === 'kn' ? 'ಫೋಟೋ ಹಾಕಿ' : 'Upload Photo')}
+                            : (language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಿ' : 'Change Photo')}
                         </span>
                       </label>
 

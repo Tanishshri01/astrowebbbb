@@ -16,57 +16,57 @@ export const serviceImages: Record<string, ServiceImageMeta> = {
     fallbackIcon: 'Coins'
   },
   'jana-vashikarana': {
-    src: '/images/krishna_govardhan.png',
+    src: '/images/jana-vashikarana.jpg',
     alt: 'Lord Sri Krishna Govardhan Protection - Public Harmony & Respect',
     fallbackIcon: 'Users'
   },
   'dhana-vashikarana': {
-    src: '/images/lord_kubera.jpg',
+    src: '/images/dhana-vashikarana.jpg',
     alt: 'Lord Kubera & Riddhi - Wealth Attraction & Abundance',
     fallbackIcon: 'Gem'
   },
   'love-relationship-issues': {
-    src: '/images/radha_krishna.jpg',
+    src: '/images/love-relationship-issues.jpg',
     alt: 'Radha Krishna Divine Union - Love & Couple Harmony',
     fallbackIcon: 'HeartHandshake'
   },
   'education-and-studies': {
-    src: '/images/goddess_saraswati.jpg',
+    src: '/images/education-and-studies.jpg',
     alt: 'Goddess Saraswati Vidya Upasana - Wisdom & Academic Success',
     fallbackIcon: 'GraduationCap'
   },
   'job-and-career-guidance': {
-    src: '/images/lord_surya.jpg',
+    src: '/images/job-and-career-guidance.jpg',
     alt: 'Surya Bhagwan Sun Deity - Professional Victory & Career Rise',
     fallbackIcon: 'Briefcase'
   },
   'financial-problems': {
-    src: '/images/lord_ganesha.jpg',
+    src: '/images/financial-problems.jpg',
     alt: 'Lord Ganesha Vighnaharta - Obstacle Removal & Debt Relief',
     fallbackIcon: 'ShieldAlert'
   },
   'enemy-troubles-spiritual-remedy': {
-    src: '/images/protection_hanuman.jpg',
+    src: '/images/enemy-troubles-spiritual-remedy.jpg',
     alt: 'Sankatmochan Hanuman - Spiritual Protection & Shield',
     fallbackIcon: 'Building2'
   },
   'business-problems': {
-    src: '/images/lord_kubera.jpg',
+    src: '/images/business-problems.jpg',
     alt: 'Vyapar Vriddhi Kubera Aradhana - Trade & Business Growth',
     fallbackIcon: 'TrendingDown'
   },
   'financial-loss-guidance': {
-    src: '/images/krishna_darshan.jpg',
+    src: '/images/financial-loss-guidance.jpg',
     alt: 'Lord Krishna Shanti Darshan - Recovery & Planetary Balance',
     fallbackIcon: 'Home'
   },
   'domestic-discord-and-family-peace': {
-    src: '/images/lord_shiva.jpg',
+    src: '/images/domestic-discord-and-family-peace.jpg',
     alt: 'Lord Shiva Meditation - Family Tranquility & Home Peace',
     fallbackIcon: 'Flame'
   },
   'homa-and-yajna-guidance': {
-    src: '/images/vedic_yajna.jpg',
+    src: '/images/homa-and-yajna-guidance.jpg',
     alt: 'Sacred Vedic Fire Homa & Yajna Havan Kund',
     fallbackIcon: 'Flame'
   }

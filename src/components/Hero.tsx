@@ -92,41 +92,41 @@ export const Hero: React.FC = () => {
 
   // Typewriter motion state for cycling through services one by one
   const [phraseIndex, setPhraseIndex] = useState(0);
-  const [currentText, setCurrentText] = useState('');
+  const [currentText, setCurrentText] = useState(ROTATING_KEYWORDS[0]);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
+  const [isPaused, setIsPaused] = useState(true);
 
   useEffect(() => {
-    const fullText = ROTATING_KEYWORDS[phraseIndex];
+    let timer: ReturnType<typeof setTimeout>;
+    const fullText = ROTATING_KEYWORDS[phraseIndex % ROTATING_KEYWORDS.length] || 'Astrology';
 
     if (isPaused) {
-      const pauseTimer = setTimeout(() => {
+      timer = setTimeout(() => {
         setIsPaused(false);
         setIsDeleting(true);
-      }, 1600);
-      return () => clearTimeout(pauseTimer);
-    }
-
-    if (isDeleting) {
-      if (currentText === '') {
-        setIsDeleting(false);
-        setPhraseIndex((prev) => (prev + 1) % ROTATING_KEYWORDS.length);
+      }, 2000);
+    } else if (isDeleting) {
+      if (currentText.length > 0) {
+        timer = setTimeout(() => {
+          setCurrentText((prev) => prev.slice(0, -1));
+        }, 35);
       } else {
-        const deleteTimer = setTimeout(() => {
-          setCurrentText(fullText.substring(0, currentText.length - 1));
-        }, 28);
-        return () => clearTimeout(deleteTimer);
+        timer = setTimeout(() => {
+          setIsDeleting(false);
+          setPhraseIndex((prev) => (prev + 1) % ROTATING_KEYWORDS.length);
+        }, 250);
       }
     } else {
-      if (currentText === fullText) {
-        setIsPaused(true);
+      if (currentText.length < fullText.length) {
+        timer = setTimeout(() => {
+          setCurrentText(fullText.slice(0, currentText.length + 1));
+        }, 75);
       } else {
-        const typeTimer = setTimeout(() => {
-          setCurrentText(fullText.substring(0, currentText.length + 1));
-        }, 65);
-        return () => clearTimeout(typeTimer);
+        setIsPaused(true);
       }
     }
+
+    return () => clearTimeout(timer);
   }, [currentText, isDeleting, isPaused, phraseIndex]);
 
   return (
@@ -183,13 +183,10 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Main Primary Heading: Fixed 'Best', Motion Word, and 'Solution in Karnataka' */}
-            <h1
-              className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FFFBEB] leading-tight sm:leading-tight mb-6 max-w-2xl min-h-[105px] sm:min-h-[135px] flex flex-col justify-center"
-              style={{ textWrap: 'balance' }}
-            >
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FFFBEB] leading-tight sm:leading-tight mb-6 max-w-2xl min-h-[110px] sm:min-h-[130px] flex flex-col justify-center">
               <div className="inline-flex items-center flex-wrap gap-x-2">
                 <span className="text-[#FFFBEB]">Best</span>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFFFFF] via-[#FEF08A] to-[#FACC15] underline decoration-[#FACC15]/60 decoration-wavy decoration-1 tracking-tight drop-shadow-sm transition-all duration-200">
+                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FFFFFF] via-[#FEF08A] to-[#FACC15] underline decoration-[#FACC15]/60 decoration-wavy decoration-1 tracking-tight drop-shadow-sm transition-all duration-150">
                   {currentText}
                 </span>
                 {/* Blinking Golden Motion Cursor */}

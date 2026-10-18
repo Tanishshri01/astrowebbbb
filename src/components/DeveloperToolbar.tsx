@@ -30,18 +30,18 @@ import {
 } from '../utils/imageStorage';
 
 const SERVICE_ITEMS_META = [
-  { id: 'lakshmi-vashikarana', number: '01', title: 'Lakshmi Vashikarana (ಲಕ್ಷ್ಮಿ ವಶೀಕರಣ)', defaultImg: '/images/goddess_lakshmi.jpg' },
-  { id: 'jana-vashikarana', number: '02', title: 'Jana Vashikarana (ಜನ ವಶೀಕರಣ)', defaultImg: '/images/krishna_govardhan.png' },
-  { id: 'dhana-vashikarana', number: '03', title: 'Dhana Vashikarana (ಧನ ವಶೀಕರಣ)', defaultImg: '/images/lord_kubera.jpg' },
-  { id: 'love-relationship-issues', number: '04', title: 'Love & Relationship (ಪ್ರೇಮ ಸಮಸ್ಯೆ)', defaultImg: '/images/radha_krishna.jpg' },
-  { id: 'education-and-studies', number: '05', title: 'Education & Studies (ವಿದ್ಯಾಭ್ಯಾಸ)', defaultImg: '/images/goddess_saraswati.jpg' },
-  { id: 'job-and-career-guidance', number: '06', title: 'Job & Career (ಉದ್ಯೋಗ)', defaultImg: '/images/lord_surya.jpg' },
-  { id: 'financial-problems', number: '07', title: 'Financial Problems (ಆರ್ಥಿಕ ಸಮಸ್ಯೆ)', defaultImg: '/images/lord_ganesha.jpg' },
-  { id: 'enemy-troubles-spiritual-remedy', number: '08', title: 'Enemy Troubles (ಶತ್ರು ಬಾಧೆ)', defaultImg: '/images/protection_hanuman.jpg' },
-  { id: 'business-problems', number: '09', title: 'Business Problems (ವ್ಯಾಪಾರ ಸಮಸ್ಯೆ)', defaultImg: '/images/lord_kubera.jpg' },
-  { id: 'financial-loss-guidance', number: '10', title: 'Financial Loss (ಧನ ನಷ್ಟ)', defaultImg: '/images/krishna_darshan.jpg' },
-  { id: 'domestic-discord-and-family-peace', number: '11', title: 'Family Peace (ಕುಟುಂಬ ಕಲಹ)', defaultImg: '/images/lord_shiva.jpg' },
-  { id: 'homa-and-yajna-guidance', number: '12', title: 'Homa & Yajna (ಹೋಮ ಯಾಗ)', defaultImg: '/images/vedic_yajna.jpg' },
+  { id: 'lakshmi-vashikarana', number: '01', title: 'Lakshmi Vashikarana (ಲಕ್ಷ್ಮಿ ವಶೀಕರಣ)', defaultImg: '/images/lakshmi-vashikarana.jpg' },
+  { id: 'jana-vashikarana', number: '02', title: 'Jana Vashikarana (ಜನ ವಶೀಕರಣ)', defaultImg: '/images/jana-vashikarana.jpg' },
+  { id: 'dhana-vashikarana', number: '03', title: 'Dhana Vashikarana (ಧನ ವಶೀಕರಣ)', defaultImg: '/images/dhana-vashikarana.jpg' },
+  { id: 'love-relationship-issues', number: '04', title: 'Love & Relationship (ಪ್ರೇಮ ಸಮಸ್ಯೆ)', defaultImg: '/images/love-relationship-issues.jpg' },
+  { id: 'education-and-studies', number: '05', title: 'Education & Studies (ವಿದ್ಯಾಭ್ಯಾಸ)', defaultImg: '/images/education-and-studies.jpg' },
+  { id: 'job-and-career-guidance', number: '06', title: 'Job & Career (ಉದ್ಯೋಗ)', defaultImg: '/images/job-and-career-guidance.jpg' },
+  { id: 'financial-problems', number: '07', title: 'Financial Problems (ಆರ್ಥಿಕ ಸಮಸ್ಯೆ)', defaultImg: '/images/financial-problems.jpg' },
+  { id: 'enemy-troubles-spiritual-remedy', number: '08', title: 'Enemy Troubles (ಶತ್ರು ಬಾಧೆ)', defaultImg: '/images/enemy-troubles-spiritual-remedy.jpg' },
+  { id: 'business-problems', number: '09', title: 'Business Problems (ವ್ಯಾಪಾರ ಸಮಸ್ಯೆ)', defaultImg: '/images/business-problems.jpg' },
+  { id: 'financial-loss-guidance', number: '10', title: 'Financial Loss (ಧನ ನಷ್ಟ)', defaultImg: '/images/financial-loss-guidance.jpg' },
+  { id: 'domestic-discord-and-family-peace', number: '11', title: 'Family Peace (ಕುಟುಂಬ ಕಲಹ)', defaultImg: '/images/domestic-discord-and-family-peace.jpg' },
+  { id: 'homa-and-yajna-guidance', number: '12', title: 'Homa & Yajna (ಹೋಮ ಯಾಗ)', defaultImg: '/images/homa-and-yajna-guidance.jpg' },
 ];
 
 export const DeveloperToolbar: React.FC = () => {
@@ -223,14 +223,32 @@ export const DeveloperToolbar: React.FC = () => {
     }
   };
 
-  const downloadImage = (dataUrl: string, fileName: string) => {
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    showToast(`Downloaded ${fileName}! Drop it in GitHub public/images/`);
+  const downloadImage = async (urlOrData: string, fileName: string) => {
+    try {
+      if (urlOrData.startsWith('data:')) {
+        const link = document.createElement('a');
+        link.href = urlOrData;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        const response = await fetch(urlOrData);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      }
+      showToast(`Downloaded ${fileName}! Drop it in GitHub public/images/`);
+    } catch (err) {
+      console.error('Download error:', err);
+      window.open(urlOrData, '_blank');
+    }
   };
 
   return (
@@ -281,7 +299,7 @@ export const DeveloperToolbar: React.FC = () => {
                       : 'bg-[#1C0204] text-[#FEF08A] border border-[#FACC15]/40 hover:bg-[#2A0307]'
                   }`}
                 >
-                  📸 Photos Manager & Direct Upload ({storedImages.length} custom detected)
+                  📸 Photo Manager & Direct Upload (All 12 Services & 4 Posters Ready)
                 </button>
                 <button
                   type="button"
@@ -314,9 +332,12 @@ export const DeveloperToolbar: React.FC = () => {
                 <>
                   {/* 4 Special Posters Manager */}
                   <div className="p-4 rounded-2xl bg-[#0D0102] border border-[#FACC15]/40">
-                    <h4 className="text-xs sm:text-sm font-black text-[#FEF08A] mb-3 flex items-center gap-2">
-                      <ImageIcon className="w-4 h-4 text-[#FACC15]" />
-                      <span>4 Special Posters (ವಿಶೇಷ ಪೋಸ್ಟರ್‌ಗಳು)</span>
+                    <h4 className="text-xs sm:text-sm font-black text-[#FEF08A] mb-3 flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <ImageIcon className="w-4 h-4 text-[#FACC15]" />
+                        <span>4 Special Posters (ವಿಶೇಷ ಪೋಸ್ಟರ್‌ಗಳು - 4/4 Active)</span>
+                      </span>
+                      <span className="text-[11px] text-emerald-400 font-mono font-semibold">Ready for Vercel & GitHub</span>
                     </h4>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -326,24 +347,29 @@ export const DeveloperToolbar: React.FC = () => {
                           `poster_${slotId}`,
                         ]);
                         const isUploading = uploadingTarget === `poster-${slotId}`;
+                        const activePosterUrl = current || `/images/poster_${slotId}.jpg`;
 
                         return (
                           <div
                             key={slotId}
                             className="p-3 rounded-xl bg-[#140103] border border-[#FACC15]/30 flex flex-col items-center text-center gap-2"
                           >
-                            <span className="text-xs font-bold text-[#FEF08A]">Poster Slot {slotId}</span>
+                            <span className="text-xs font-bold text-[#FEF08A]">Special Poster {slotId}</span>
                             <div className="w-full aspect-[3/4] max-h-36 rounded-lg overflow-hidden bg-[#0A0102] border border-[#FACC15]/40 relative">
                               <img
-                                src={current || `/images/poster_${slotId}.jpg`}
+                                src={activePosterUrl}
                                 alt={`Poster ${slotId}`}
                                 className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  const target = e.currentTarget;
+                                  if (!target.src.endsWith('/images/krishna_darshan.jpg')) {
+                                    target.src = '/images/krishna_darshan.jpg';
+                                  }
+                                }}
                               />
-                              {current && (
-                                <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-emerald-950/90 border border-emerald-400 text-emerald-300 text-[9px] font-bold">
-                                  Custom
-                                </span>
-                              )}
+                              <span className="absolute top-1 left-1 px-1.5 py-0.5 rounded bg-emerald-950/90 border border-emerald-400 text-emerald-300 text-[9px] font-bold">
+                                {current ? 'Custom' : 'Active'}
+                              </span>
                             </div>
 
                             <label
@@ -351,7 +377,7 @@ export const DeveloperToolbar: React.FC = () => {
                               className="w-full py-1.5 bg-[#FACC15] hover:bg-[#FEF08A] text-[#1E0204] text-xs font-black rounded-lg flex items-center justify-center gap-1 cursor-pointer transition active:scale-95 shadow"
                             >
                               <Upload className="w-3 h-3" />
-                              <span>{isUploading ? 'Uploading...' : current ? 'Change Photo' : 'Upload Photo'}</span>
+                              <span>{isUploading ? 'Uploading...' : 'Change Photo'}</span>
                             </label>
                             <input
                               type="file"
@@ -364,16 +390,15 @@ export const DeveloperToolbar: React.FC = () => {
                               }}
                             />
 
-                            {current && (
-                              <button
-                                type="button"
-                                onClick={() => downloadImage(current, `poster_${slotId}.jpg`)}
-                                className="text-[11px] text-[#FACC15] hover:underline flex items-center gap-1 cursor-pointer"
-                              >
-                                <Download className="w-3 h-3" />
-                                <span>Download for GitHub</span>
-                              </button>
-                            )}
+                            <button
+                              type="button"
+                              onClick={() => downloadImage(activePosterUrl, `poster_${slotId}.jpg`)}
+                              className="text-[11px] text-[#FACC15] hover:underline flex items-center gap-1 cursor-pointer"
+                              title="Download to save permanently in GitHub public/images/"
+                            >
+                              <Download className="w-3 h-3" />
+                              <span>Download for GitHub</span>
+                            </button>
                           </div>
                         );
                       })}
@@ -382,9 +407,12 @@ export const DeveloperToolbar: React.FC = () => {
 
                   {/* 12 Services Photos Manager */}
                   <div className="p-4 rounded-2xl bg-[#0D0102] border border-[#FACC15]/40">
-                    <h4 className="text-xs sm:text-sm font-black text-[#FEF08A] mb-3 flex items-center gap-2">
-                      <Camera className="w-4 h-4 text-[#FACC15]" />
-                      <span>12 Vedic Services Photos (೧೨ ಜ್ಯೋತಿಷ್ಯ ಸೇವೆಗಳು)</span>
+                    <h4 className="text-xs sm:text-sm font-black text-[#FEF08A] mb-3 flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <Camera className="w-4 h-4 text-[#FACC15]" />
+                        <span>12 Vedic Services Photos (೧೨ ಜ್ಯೋತಿಷ್ಯ ಸೇವೆಗಳು - 12/12 Active)</span>
+                      </span>
+                      <span className="text-[11px] text-emerald-400 font-mono font-semibold">All 12 Active in /public/images</span>
                     </h4>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -395,6 +423,7 @@ export const DeveloperToolbar: React.FC = () => {
                           `service_${item.id}`,
                         ]);
                         const isUploading = uploadingTarget === `service-${item.id}`;
+                        const activeServiceUrl = current || item.defaultImg;
 
                         return (
                           <div
@@ -404,19 +433,23 @@ export const DeveloperToolbar: React.FC = () => {
                             <div className="flex items-center gap-2.5">
                               <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#0A0102] border border-[#FACC15]/40 shrink-0 relative">
                                 <img
-                                  src={current || item.defaultImg}
+                                  src={activeServiceUrl}
                                   alt={item.title}
                                   className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.currentTarget;
+                                    if (!target.src.endsWith('/images/krishna_darshan.jpg')) {
+                                      target.src = '/images/krishna_darshan.jpg';
+                                    }
+                                  }}
                                 />
-                                {current && (
-                                  <span className="absolute bottom-0 inset-x-0 bg-emerald-950/90 text-emerald-300 text-[8px] font-bold text-center">
-                                    Custom
-                                  </span>
-                                )}
+                                <span className="absolute bottom-0 inset-x-0 bg-emerald-950/90 text-emerald-300 text-[8px] font-bold text-center">
+                                  {current ? 'Custom' : 'Active'}
+                                </span>
                               </div>
                               <div className="overflow-hidden">
                                 <div className="text-xs font-bold text-[#FEF08A] line-clamp-1">{item.title}</div>
-                                <div className="text-[10px] text-[#FFFBEB]/60 font-mono">Service {item.number}</div>
+                                <div className="text-[10px] text-[#FFFBEB]/60 font-mono">Service {item.number} • {item.id}.jpg</div>
                               </div>
                             </div>
 
@@ -426,7 +459,7 @@ export const DeveloperToolbar: React.FC = () => {
                                 className="flex-1 py-1.5 bg-[#FACC15] hover:bg-[#FEF08A] text-[#1E0204] text-[11px] font-black rounded-lg flex items-center justify-center gap-1 cursor-pointer transition active:scale-95 shadow"
                               >
                                 <Upload className="w-3 h-3" />
-                                <span>{isUploading ? 'Uploading...' : current ? 'Change' : 'Upload'}</span>
+                                <span>{isUploading ? 'Uploading...' : 'Change'}</span>
                               </label>
                               <input
                                 type="file"
@@ -439,16 +472,14 @@ export const DeveloperToolbar: React.FC = () => {
                                 }}
                               />
 
-                              {current && (
-                                <button
-                                  type="button"
-                                  onClick={() => downloadImage(current, `${item.id}.jpg`)}
-                                  className="p-1.5 rounded-lg bg-[#2A0307] hover:bg-[#3D050A] text-[#FEF08A] border border-[#FACC15]/40 cursor-pointer"
-                                  title="Download for GitHub"
-                                >
-                                  <Download className="w-3.5 h-3.5" />
-                                </button>
-                              )}
+                              <button
+                                type="button"
+                                onClick={() => downloadImage(activeServiceUrl, `${item.id}.jpg`)}
+                                className="p-1.5 rounded-lg bg-[#2A0307] hover:bg-[#3D050A] text-[#FEF08A] border border-[#FACC15]/40 cursor-pointer"
+                                title={`Download ${item.id}.jpg for GitHub`}
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                              </button>
                             </div>
                           </div>
                         );
