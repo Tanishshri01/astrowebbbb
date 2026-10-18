@@ -393,30 +393,6 @@ export const PostersShowcase: React.FC = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Footer Bar of each poster slot */}
-                <div className="p-3.5 bg-gradient-to-r from-[#180204] via-[#0E0102] to-[#180204] border-t border-[#FACC15]/30 flex flex-col items-center text-center">
-                  <div className="font-bold text-[#FEF08A] text-xs sm:text-sm line-clamp-1">
-                    {slotTitle}
-                  </div>
-                  <div className="text-[11px] text-[#FFFBEB]/70 line-clamp-1 mt-0.5">
-                    {slotSubtitle}
-                  </div>
-
-                  {/* Developer Mode ONLY Indicator in footer */}
-                  {isDevMode && (
-                    <div className="mt-2 pt-2 border-t border-[#FACC15]/20 w-full flex items-center justify-between text-[11px]">
-                      <span className="text-emerald-400 font-mono text-[10px]">Dev Slot {slot.id} • Active</span>
-                      <label
-                        htmlFor={`poster-file-input-${slot.id}`}
-                        className="text-[#FACC15] hover:text-[#FFFFFF] underline font-bold cursor-pointer flex items-center gap-1 select-none"
-                      >
-                        <Upload className="w-3 h-3" />
-                        <span>{text.changeBtn}</span>
-                      </label>
-                    </div>
-                  )}
-                </div>
               </div>
             );
           })}

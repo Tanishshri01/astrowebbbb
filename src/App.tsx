@@ -12,6 +12,7 @@ import { KrishnaDarshanSection } from './components/KrishnaDarshanSection';
 import { ServicesGrid } from './components/ServicesGrid';
 import { RitualsSection } from './components/RitualsSection';
 import { BlogSection } from './components/BlogSection';
+import { PostersShowcase } from './components/PostersShowcase';
 import { WhyChooseUs } from './components/WhyChooseUs';
 import { FaqAccordion } from './components/FaqAccordion';
 import { ContactSection } from './components/ContactSection';
@@ -36,6 +37,7 @@ export default function App() {
             <ServicesGrid />
             <RitualsSection />
             <BlogSection />
+            <PostersShowcase />
             <WhyChooseUs />
             <FaqAccordion />
             <ContactSection />
