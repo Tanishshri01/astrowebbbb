@@ -338,8 +338,8 @@ export const Hero: React.FC = () => {
                 <h3 className="text-xl font-black text-[#FEF08A] tracking-tight">
                   {t.brand.astrologer}
                 </h3>
-                <p className="text-xs font-bold text-[#FACC15] uppercase tracking-wider mt-0.5">
-                  {t.brand.name} • ಮುಖ್ಯ ಜ್ಯೋತಿಷಿ
+                <p className="text-xs font-bold text-[#FACC15] uppercase tracking-wider mt-1 px-2 leading-relaxed">
+                  The One and Only Maha Guruji, Master of Astrology, Priesthood, and Tantric Sciences!
                 </p>
               </div>
 
