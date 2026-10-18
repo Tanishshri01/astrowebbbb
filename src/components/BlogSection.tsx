@@ -5,10 +5,12 @@ import { getAllBlogPosts } from '../utils/blogStorage';
 import { BlogPostModal } from './BlogPostModal';
 import { BlogAdminModal } from './BlogAdminModal';
 import { useLanguage } from '../context/LanguageContext';
+import { useDeveloperMode } from '../context/DeveloperContext';
 import { translations } from '../data/translations';
 
 export const BlogSection: React.FC = () => {
   const { language } = useLanguage();
+  const { isDevMode } = useDeveloperMode();
   const t = translations[language];
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -124,25 +126,27 @@ export const BlogSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Post Blog Action Button */}
-          <div className="shrink-0 flex items-center">
-            <button
-              type="button"
-              onClick={() => setIsAdminOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FEF08A] via-[#FACC15] to-[#EAB308] hover:from-[#FFFFFF] hover:to-[#FACC15] text-[#380307] text-xs sm:text-sm font-black transition-all shadow-lg active:scale-95 cursor-pointer border-2 border-[#FEF08A]"
-            >
-              <PlusCircle className="w-4 h-4 text-[#380307]" />
-              <span>
-                {language === 'kn'
-                  ? '+ ಹೊಸ ಲೇಖನ ಬರೆಯಿರಿ (Post Blog)'
-                  : language === 'te'
-                  ? '+ కొత్త వ్యాసం రాయండి (Post Blog)'
-                  : language === 'hi'
-                  ? '+ नया लेख लिखें (Post Blog)'
-                  : '+ Post New Blog'}
-              </span>
-            </button>
-          </div>
+          {/* Post Blog Action Button (Developer Mode Only) */}
+          {isDevMode && (
+            <div className="shrink-0 flex items-center">
+              <button
+                type="button"
+                onClick={() => setIsAdminOpen(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FEF08A] via-[#FACC15] to-[#EAB308] hover:from-[#FFFFFF] hover:to-[#FACC15] text-[#380307] text-xs sm:text-sm font-black transition-all shadow-lg active:scale-95 cursor-pointer border-2 border-[#FEF08A]"
+              >
+                <PlusCircle className="w-4 h-4 text-[#380307]" />
+                <span>
+                  {language === 'kn'
+                    ? '+ ಹೊಸ ಲೇಖನ ಬರೆಯಿರಿ (Post Blog)'
+                    : language === 'te'
+                    ? '+ కొత్త వ్యాసం రాయండి (Post Blog)'
+                    : language === 'hi'
+                    ? '+ नया लेख लिखें (Post Blog)'
+                    : '+ Post New Blog'}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Filter Controls & Search Bar */}

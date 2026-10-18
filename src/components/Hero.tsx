@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { MessageCircle, Compass, PhoneCall, Sparkles, Instagram, Facebook, X, Upload, Check, RefreshCw } from 'lucide-react';
+import { MessageCircle, Compass, PhoneCall, Sparkles, Instagram, Facebook, X, Upload, Check, RefreshCw, Camera } from 'lucide-react';
 import { ZodiacWheel } from './SacredIcons';
 import {
   getWhatsAppUrl,
@@ -10,6 +10,7 @@ import {
   FACEBOOK_URL
 } from '../utils/whatsapp';
 import { useLanguage } from '../context/LanguageContext';
+import { useDeveloperMode } from '../context/DeveloperContext';
 import { translations } from '../data/translations';
 import { PANDIT_SACHIN_SHARMA_IMAGE, PANDIT_FALLBACK_SVG, KRISHNA_BHAGWAN_IMAGE } from '../utils/serviceImages';
 
@@ -28,6 +29,7 @@ const ROTATING_KEYWORDS = [
 
 export const Hero: React.FC = () => {
   const { language } = useLanguage();
+  const { isDevMode } = useDeveloperMode();
   const t = translations[language];
   const [imgSrc, setImgSrc] = useState(() => {
     return localStorage.getItem('astro_pandit_custom_portrait') || PANDIT_SACHIN_SHARMA_IMAGE;
@@ -309,6 +311,19 @@ export const Hero: React.FC = () => {
                   />
                   {/* Subtle golden bottom glow */}
                   <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0A0102] via-[#0A0102]/60 to-transparent pointer-events-none" />
+
+                  {/* Developer Mode ONLY: Edit Portrait Button */}
+                  {isDevMode && (
+                    <button
+                      type="button"
+                      onClick={() => setShowOwnerModal(true)}
+                      className="absolute top-2 right-2 z-20 px-2.5 py-1 rounded-lg bg-[#1C0204]/90 border border-[#FACC15] text-[#FEF08A] text-[10px] font-bold flex items-center gap-1 shadow-md cursor-pointer hover:bg-[#320408] transition active:scale-95"
+                      title="Developer: Change Portrait"
+                    >
+                      <Camera className="w-3 h-3 text-[#FACC15]" />
+                      <span>Edit Portrait</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Verified Astrologer Badge */}

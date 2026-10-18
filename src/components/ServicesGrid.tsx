@@ -22,6 +22,7 @@ import { ServiceItem } from '../types';
 import { getWhatsAppUrl } from '../utils/whatsapp';
 import { ServiceDetailModal } from './ServiceDetailModal';
 import { useLanguage } from '../context/LanguageContext';
+import { useDeveloperMode } from '../context/DeveloperContext';
 import { translations } from '../data/translations';
 import { serviceImages } from '../utils/serviceImages';
 import {
@@ -93,6 +94,7 @@ async function getCandidateServiceImageAsync(id: string, num?: string): Promise<
 
 export const ServicesGrid: React.FC = () => {
   const { language } = useLanguage();
+  const { isDevMode } = useDeveloperMode();
   const t = translations[language];
   const [selectedService, setSelectedService] = useState<ServiceItem | null>(null);
 
@@ -189,14 +191,16 @@ export const ServicesGrid: React.FC = () => {
               >
                 {/* Service Photo Banner */}
                 <div className="relative w-full h-48 sm:h-52 overflow-hidden bg-[#0A0102] border-b border-[#FACC15]/30">
-                  {/* Native file input for this service */}
-                  <input
-                    type="file"
-                    id={`service-file-input-${service.id}`}
-                    accept="image/*"
-                    onChange={(e) => handleServiceImageUpload(service.id, e)}
-                    className="sr-only"
-                  />
+                  {/* Developer Only: Native file input for this service */}
+                  {isDevMode && (
+                    <input
+                      type="file"
+                      id={`service-file-input-${service.id}`}
+                      accept="image/*"
+                      onChange={(e) => handleServiceImageUpload(service.id, e)}
+                      className="sr-only"
+                    />
+                  )}
 
                   <img
                     src={currentImg}
@@ -204,53 +208,59 @@ export const ServicesGrid: React.FC = () => {
                     loading="lazy"
                     className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-500 cursor-pointer"
                     onClick={() => {
-                      const input = document.getElementById(`service-file-input-${service.id}`) as HTMLInputElement;
-                      if (input) input.click();
+                      if (isDevMode) {
+                        const input = document.getElementById(`service-file-input-${service.id}`) as HTMLInputElement;
+                        if (input) input.click();
+                      } else {
+                        setSelectedService(service);
+                      }
                     }}
-                    title={language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ' : 'Click to change photo'}
+                    title={isDevMode ? (language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಲು ಕ್ಲಿಕ್ ಮಾಡಿ' : 'Developer: Click to change photo') : service.title}
                   />
                   {/* Subtle Gradient Shadow */}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#140103] via-transparent to-black/40 pointer-events-none" />
 
-                  {/* Top Left: Change Picture Upload Button & Save Status */}
-                  <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-1.5 flex-wrap">
-                    <label
-                      htmlFor={`service-file-input-${service.id}`}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#140103]/95 hover:bg-[#2A0307] border border-[#FACC15] hover:border-[#FEF08A] text-[#FEF08A] hover:text-[#FFFFFF] text-xs font-bold shadow-md cursor-pointer transition-all active:scale-95 select-none"
-                      title={language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಿ / ಅಪ್‌ಲೋಡ್ ಮಾಡಿ' : 'Change / Upload Picture'}
-                    >
-                      {uploadingServiceId === service.id ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-[#FACC15]" />
-                      ) : (
-                        <Camera className="w-3.5 h-3.5 text-[#FACC15]" />
-                      )}
-                      <span>
-                        {uploadingServiceId === service.id
-                          ? 'Uploading...'
-                          : hasCustom
-                          ? (language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಿ' : 'Change Photo')
-                          : (language === 'kn' ? 'ಫೋಟೋ ಹಾಕಿ' : 'Upload Photo')}
-                      </span>
-                    </label>
-
-                    {recentlySavedId === service.id && (
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-950/95 border border-emerald-400 text-emerald-300 text-[10px] font-bold flex items-center gap-1 shadow-sm animate-pulse">
-                        <Check className="w-2.5 h-2.5" />
-                        <span>Saved</span>
-                      </span>
-                    )}
-
-                    {hasCustom && (
-                      <button
-                        type="button"
-                        onClick={(e) => handleResetServiceImage(service.id, e)}
-                        className="p-1 rounded-lg bg-[#0A0102]/90 hover:bg-red-950/90 border border-red-500/60 text-red-300 hover:text-white transition cursor-pointer shadow-sm"
-                        title={language === 'kn' ? 'ಮೂಲ ಚಿತ್ರಕ್ಕೆ ಮರುಹೊಂದಿಸಿ' : 'Reset to default image'}
+                  {/* Developer Mode ONLY: Change Picture Upload Button & Save Status */}
+                  {isDevMode && (
+                    <div className="absolute top-2.5 left-2.5 z-20 flex items-center gap-1.5 flex-wrap">
+                      <label
+                        htmlFor={`service-file-input-${service.id}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#140103]/95 hover:bg-[#2A0307] border border-[#FACC15] hover:border-[#FEF08A] text-[#FEF08A] hover:text-[#FFFFFF] text-xs font-bold shadow-md cursor-pointer transition-all active:scale-95 select-none"
+                        title={language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಿ / ಅಪ್‌ಲೋಡ್ ಮಾಡಿ' : 'Change / Upload Picture'}
                       >
-                        <RotateCcw className="w-3 h-3" />
-                      </button>
-                    )}
-                  </div>
+                        {uploadingServiceId === service.id ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin text-[#FACC15]" />
+                        ) : (
+                          <Camera className="w-3.5 h-3.5 text-[#FACC15]" />
+                        )}
+                        <span>
+                          {uploadingServiceId === service.id
+                            ? 'Uploading...'
+                            : hasCustom
+                            ? (language === 'kn' ? 'ಫೋಟೋ ಬದಲಾಯಿಸಿ' : 'Change Photo')
+                            : (language === 'kn' ? 'ಫೋಟೋ ಹಾಕಿ' : 'Upload Photo')}
+                        </span>
+                      </label>
+
+                      {recentlySavedId === service.id && (
+                        <span className="px-2 py-0.5 rounded-lg bg-emerald-950/95 border border-emerald-400 text-emerald-300 text-[10px] font-bold flex items-center gap-1 shadow-sm animate-pulse">
+                          <Check className="w-2.5 h-2.5" />
+                          <span>Saved</span>
+                        </span>
+                      )}
+
+                      {hasCustom && (
+                        <button
+                          type="button"
+                          onClick={(e) => handleResetServiceImage(service.id, e)}
+                          className="p-1 rounded-lg bg-[#0A0102]/90 hover:bg-red-950/90 border border-red-500/60 text-red-300 hover:text-white transition cursor-pointer shadow-sm"
+                          title={language === 'kn' ? 'ಮೂಲ ಚಿತ್ರಕ್ಕೆ ಮರುಹೊಂದಿಸಿ' : 'Reset to default image'}
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                  )}
 
                   {/* Top Corner Number Accent */}
                   <div className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-[#0A0102]/95 border border-[#FACC15] text-xs font-mono font-black text-[#FEF08A] shadow-md z-10">

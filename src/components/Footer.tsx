@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, MessageCircle, ArrowUp, Instagram, Facebook } from 'lucide-react';
+import { Phone, MessageCircle, ArrowUp, Instagram, Facebook, Lock } from 'lucide-react';
 import { OmEmblem } from './SacredIcons';
 import {
   getWhatsAppUrl,
@@ -12,10 +12,12 @@ import {
 } from '../utils/whatsapp';
 import { LegalModal } from './LegalModal';
 import { useLanguage } from '../context/LanguageContext';
+import { useDeveloperMode } from '../context/DeveloperContext';
 import { translations } from '../data/translations';
 
 export const Footer: React.FC = () => {
   const { language } = useLanguage();
+  const { isDevMode, openLoginModal } = useDeveloperMode();
   const t = translations[language];
   const [legalType, setLegalType] = useState<'privacy' | 'terms' | null>(null);
 
@@ -194,6 +196,16 @@ export const Footer: React.FC = () => {
                   <span>deepproductions</span>
                 </a>
               </span>
+              <span className="hidden sm:inline text-[#FACC15]/40">•</span>
+              <button
+                type="button"
+                onClick={openLoginModal}
+                className="text-[#FFFBEB]/40 hover:text-[#FACC15] transition-colors text-[11px] inline-flex items-center gap-1 cursor-pointer font-medium py-0.5"
+                title="Developer / Admin Access"
+              >
+                <Lock className="w-2.5 h-2.5 text-[#FACC15]" />
+                <span>{isDevMode ? '🛠️ Dev Mode Active' : 'ನಿರ್ವಾಹಕ • Dev Mode'}</span>
+              </button>
             </div>
 
             <div className="flex items-center gap-4">

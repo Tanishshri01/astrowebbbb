@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { LanguageProvider } from './context/LanguageContext';
+import { DeveloperProvider } from './context/DeveloperContext';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { KrishnaDarshanSection } from './components/KrishnaDarshanSection';
@@ -18,36 +19,46 @@ import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { WhatsAppPopup } from './components/WhatsAppPopup';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { DeveloperToolbar } from './components/DeveloperToolbar';
+import { DeveloperLoginModal } from './components/DeveloperLoginModal';
 
 export default function App() {
   return (
     <LanguageProvider>
-      <div className="min-h-screen bg-[#0A0102] text-[#FFFBEB] flex flex-col font-sans selection:bg-[#FACC15] selection:text-[#380307]">
-        {/* Navigation Header with Translate Button at Top */}
-        <Header />
+      <DeveloperProvider>
+        <div className="min-h-screen bg-[#0A0102] text-[#FFFBEB] flex flex-col font-sans selection:bg-[#FACC15] selection:text-[#380307]">
+          {/* Navigation Header with Translate Button at Top */}
+          <Header />
 
-        {/* Main Website Sections */}
-        <main className="flex-1">
-          <Hero />
-          <KrishnaDarshanSection />
-          <ServicesGrid />
-          <RitualsSection />
-          <BlogSection />
-          <PostersShowcase />
-          <WhyChooseUs />
-          <FaqAccordion />
-          <ContactSection />
-        </main>
+          {/* Main Website Sections */}
+          <main className="flex-1">
+            <Hero />
+            <KrishnaDarshanSection />
+            <ServicesGrid />
+            <RitualsSection />
+            <BlogSection />
+            <PostersShowcase />
+            <WhyChooseUs />
+            <FaqAccordion />
+            <ContactSection />
+          </main>
 
-        {/* Footer */}
-        <Footer />
+          {/* Footer */}
+          <Footer />
 
-        {/* Timed WhatsApp Popup (6s after load) */}
-        <WhatsAppPopup />
+          {/* Timed WhatsApp Popup (6s after load) */}
+          <WhatsAppPopup />
 
-        {/* Persistent Floating WhatsApp Button */}
-        <FloatingWhatsApp />
-      </div>
+          {/* Persistent Floating WhatsApp Button */}
+          <FloatingWhatsApp />
+
+          {/* Developer Control Toolbar (Only visible when developer mode is active) */}
+          <DeveloperToolbar />
+
+          {/* Developer Login Dialog */}
+          <DeveloperLoginModal />
+        </div>
+      </DeveloperProvider>
     </LanguageProvider>
   );
 }
