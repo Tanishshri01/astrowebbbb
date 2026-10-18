@@ -16,15 +16,16 @@ import { PANDIT_SACHIN_SHARMA_IMAGE, PANDIT_FALLBACK_SVG, KRISHNA_BHAGWAN_IMAGE 
 
 const ROTATING_KEYWORDS = [
   'Astrology',
-  'Psychic Readings',
-  'Love Problem',
-  'Career Problem',
-  'Negative Energy',
-  'Relationship Problems',
+  'Lakshmi Vashikarana',
+  'Jana Vashikarana',
+  'Dhana Vashikarana',
+  'Love & Relationship',
+  'Career Guidance',
   'Financial Problems',
-  'Health Problems',
-  'Vastu Problems',
-  'Spiritual Guidance',
+  'Enemy Troubles Remedy',
+  'Business Problems',
+  'Family Peace',
+  'Homa & Yajna Guidance',
 ];
 
 export const Hero: React.FC = () => {
@@ -94,40 +95,40 @@ export const Hero: React.FC = () => {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [currentText, setCurrentText] = useState(ROTATING_KEYWORDS[0]);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isPaused, setIsPaused] = useState(true);
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>;
     const fullText = ROTATING_KEYWORDS[phraseIndex % ROTATING_KEYWORDS.length] || 'Astrology';
 
-    if (isPaused) {
-      timer = setTimeout(() => {
-        setIsPaused(false);
-        setIsDeleting(true);
-      }, 2000);
-    } else if (isDeleting) {
-      if (currentText.length > 0) {
+    if (!isDeleting) {
+      if (currentText.length < fullText.length) {
+        // Typing phase: type next character smoothly
         timer = setTimeout(() => {
-          setCurrentText((prev) => prev.slice(0, -1));
-        }, 35);
+          setCurrentText(fullText.slice(0, currentText.length + 1));
+        }, 80);
       } else {
+        // Finished typing word: pause and display for 2200ms before deleting
+        timer = setTimeout(() => {
+          setIsDeleting(true);
+        }, 2200);
+      }
+    } else {
+      if (currentText.length > 0) {
+        // Deleting phase: delete character quickly
+        timer = setTimeout(() => {
+          setCurrentText(fullText.slice(0, currentText.length - 1));
+        }, 40);
+      } else {
+        // Finished deleting: pause slightly, move to next keyword, and start typing
         timer = setTimeout(() => {
           setIsDeleting(false);
           setPhraseIndex((prev) => (prev + 1) % ROTATING_KEYWORDS.length);
-        }, 250);
-      }
-    } else {
-      if (currentText.length < fullText.length) {
-        timer = setTimeout(() => {
-          setCurrentText(fullText.slice(0, currentText.length + 1));
-        }, 75);
-      } else {
-        setIsPaused(true);
+        }, 300);
       }
     }
 
     return () => clearTimeout(timer);
-  }, [currentText, isDeleting, isPaused, phraseIndex]);
+  }, [currentText, isDeleting, phraseIndex]);
 
   return (
     <section
@@ -183,14 +184,16 @@ export const Hero: React.FC = () => {
             </div>
 
             {/* Main Primary Heading: Fixed 'Best', Motion Word, and 'Solution in Karnataka' */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FFFBEB] leading-tight sm:leading-tight mb-6 max-w-2xl min-h-[110px] sm:min-h-[130px] flex flex-col justify-center">
-              <div className="inline-flex items-center flex-wrap gap-x-2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#FFFBEB] leading-tight mb-6 max-w-2xl min-h-[110px] sm:min-h-[130px] flex flex-col justify-center">
+              <div className="inline-flex items-baseline flex-wrap gap-x-2.5">
                 <span className="text-[#FFFBEB]">Best</span>
-                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FFFFFF] via-[#FEF08A] to-[#FACC15] underline decoration-[#FACC15]/60 decoration-wavy decoration-1 tracking-tight drop-shadow-sm transition-all duration-150">
-                  {currentText}
+                <span className="inline-flex items-center text-[#FACC15] font-black tracking-tight drop-shadow-md min-h-[1.25em]">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFFFFF] via-[#FEF08A] to-[#FACC15]">
+                    {currentText || '\u00A0'}
+                  </span>
+                  {/* Blinking Golden Motion Cursor */}
+                  <span className="inline-block w-1 sm:w-1.5 h-6 sm:h-8 bg-[#FACC15] ml-1 rounded-full animate-pulse shadow-xs shadow-[#FACC15]" />
                 </span>
-                {/* Blinking Golden Motion Cursor */}
-                <span className="inline-block w-1 sm:w-1.5 h-[0.85em] bg-[#FACC15] -ml-0.5 rounded-full animate-pulse shadow-xs shadow-[#FACC15]" />
               </div>
               <span className="text-[#FEF08A] text-2xl sm:text-3xl md:text-4xl font-black mt-2 tracking-wide">
                 Solution in Karnataka
@@ -199,7 +202,7 @@ export const Hero: React.FC = () => {
 
             {/* Supporting Prose with Requested Services List */}
             <p className="text-sm sm:text-base text-[#FFFBEB]/90 leading-relaxed mb-6 max-w-2xl font-normal">
-              Career Guidance, Relationship Problems, Financial Problems, Health Problems, Negative Energy Removal, Vastu Problems, Love & Marriage Problems, Spiritual Guidance.
+              Lakshmi Vashikarana, Jana Vashikarana, Dhana Vashikarana, Love & Relationship Issues, Education & Studies, Job & Career Guidance, Financial Problems, Enemy Troubles Spiritual Remedy, Business Problems, Financial Loss Guidance, Domestic Discord & Family Peace, Homa & Yajna Guidance.
             </p>
 
             {/* Primary & Secondary Call to Actions */}
@@ -337,9 +340,6 @@ export const Hero: React.FC = () => {
                 </h3>
                 <p className="text-xs font-bold text-[#FACC15] uppercase tracking-wider mt-0.5">
                   {t.brand.name} • ಮುಖ್ಯ ಜ್ಯೋತಿಷಿ
-                </p>
-                <p className="text-xs text-[#FFFBEB]/90 mt-1.5 leading-relaxed font-semibold">
-                  Vastu, Numerology and Vedic Shastra Expert
                 </p>
               </div>
 

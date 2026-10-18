@@ -604,8 +604,8 @@ export const translations: Record<Language, TranslationContent> = {
     about: {
       tagline: 'Tradition & Lineage',
       heading: 'Sacred Wisdom Rooted in Ancient Vedic Traditions',
-      quote: 'Ancient spiritual traditions of Kerala and Dakshina Kashi, generational wisdom, and guidance on sacred religious practices including Homas and Yajnas.',
-      desc1: 'Astrology is not merely about predicting the future; it is a divine lantern illuminating the path during life’s trials and tribulations. Pandit Sachin Sharma listens with empathy and draws upon Kerala Tantrik traditions and Dakshina Kashi Vedic heritage.',
+      quote: 'Ancient spiritual traditions of Sanatana Dharma and Dakshina Kashi, generational wisdom, and guidance on sacred religious practices including Homas and Yajnas.',
+      desc1: 'Astrology is not merely about predicting the future; it is a divine lantern illuminating the path during life’s trials and tribulations. Pandit Sachin Sharma listens with empathy and draws upon sacred Vedic astrological traditions and Dakshina Kashi heritage.',
       desc2: 'Through careful horoscope study, planetary remedy guidance, Vastu harmonization, and traditional sacred homas, he assists seekers in restoring positive energy and peace into their lives.',
       pillar1Title: 'Scriptural Horoscope Study',
       pillar1Desc: 'Accurate analysis of birth charts (Kundali), planetary placements, and dasha cycles.',
@@ -686,7 +686,7 @@ export const translations: Record<Language, TranslationContent> = {
         {
           id: 'love-relationship-issues',
           number: '04',
-          title: 'Love & Relationship Challenges',
+          title: 'Love & Relationship Issues',
           subtitle: 'Marital Harmony, Mutual Trust, and Family Understanding',
           shortDescription: 'Astrological analysis for misunderstandings, compatibility hurdles, Manglik dosha, and restoring affection.',
           fullDescription: 'Relationships encounter turbulence when Venus, Mars, or Rahu-Ketu transit delicate positions. Pandit Ji analyzes Ashtakoota compatibility and prescribes Uma-Maheshwara and Radha-Krishna prayers to revive mutual trust and warmth.',
@@ -703,7 +703,7 @@ export const translations: Record<Language, TranslationContent> = {
         {
           id: 'education-and-studies',
           number: '05',
-          title: 'Education & Academics',
+          title: 'Education & Studies',
           subtitle: 'Student Concentration, Memory, and Academic Path',
           shortDescription: 'Overcoming exam anxiety, strengthening Mercury and Jupiter, and Saraswati-Hayagriva worship for children.',
           fullDescription: 'Education forms the bedrock of life. Students facing memory lapses, restlessness, or examination panic receive astrological remedies strengthening Mercury (intellect) and Jupiter (wisdom), paired with Medha Dakshinamurthy stotras.',
@@ -737,7 +737,7 @@ export const translations: Record<Language, TranslationContent> = {
         {
           id: 'financial-problems',
           number: '07',
-          title: 'Financial & Debt Relief',
+          title: 'Financial Problems',
           subtitle: 'Remedies for Debt Burden and Chronic Financial Distress',
           shortDescription: 'Traditional prayers to emerge from cyclic debts, Rina Vimochana Angaraka pooja, and financial restoration.',
           fullDescription: 'Debt pressure deprives one of sleep and domestic peace. Afflictions on the 6th (debts) and 12th (expenses) houses are analyzed to guide seekers through Rina Vimochana Stotra recitations and Lord Narasimha prayers.',
@@ -754,10 +754,10 @@ export const translations: Record<Language, TranslationContent> = {
         {
           id: 'enemy-troubles-spiritual-remedy',
           number: '08',
-          title: 'Protection from Negative Influences',
+          title: 'Enemy Troubles Spiritual Remedy',
           subtitle: 'Evil Eye (Drishti), Malice, and Divine Protective Shield',
           shortDescription: 'Vedic rituals and Sudarshana protection to dispel negative vibrations, jealousy, and unwarranted disputes.',
-          fullDescription: 'Unprovoked animosity, malicious eyes, or toxic disputes can induce acute mental distress. Traditional Kerala Tantrik remedies, Sudarshana Homa, and Narasimha Kavacha practices help establish a serene protective shield around family.',
+          fullDescription: 'Unprovoked animosity, malicious eyes, or toxic disputes can induce acute mental distress. Traditional Vedic remedies, Sudarshana Homa, and Narasimha Kavacha practices help establish a serene protective shield around family.',
           traditionalAspects: [
             'Traditional methods to neutralize evil eye (Drishti dosha)',
             'Sudarshana Yantra worship and consecrated protective threads',
@@ -771,7 +771,7 @@ export const translations: Record<Language, TranslationContent> = {
         {
           id: 'business-problems',
           number: '09',
-          title: 'Business & Commercial Hurdles',
+          title: 'Business Problems',
           subtitle: 'Business Slump, Footfall Drop, and Partnership Friction',
           shortDescription: 'Vyapara Vriddhi yantra, commercial Vastu harmony, and identifying auspicious timings to revive enterprise.',
           fullDescription: 'When capital remains locked, customer footfall declines, or partners lock horns, examination of the 7th house (commerce) and Mercury provides actionable remedies and Vyapara Vriddhi yantra installation guidance.',
@@ -788,7 +788,7 @@ export const translations: Record<Language, TranslationContent> = {
         {
           id: 'financial-loss-guidance',
           number: '10',
-          title: 'Recovery from Sudden Financial Losses',
+          title: 'Financial Loss Guidance',
           subtitle: 'Share Market, Investments, or Business Shock Analysis',
           shortDescription: 'Pacifying Rahu-Ketu or Saturn transits, Navagraha shanti, and spiritual revival after sudden financial distress.',
           fullDescription: 'Sudden economic shocks, fraud, or market losses often coincide with Rahu-Ketu or Saturn cycles. Rather than losing hope, Navagraha Shanti rituals and charity practices help neutralize harsh transits and revive confidence.',

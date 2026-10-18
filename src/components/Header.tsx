@@ -36,7 +36,7 @@ export const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
           
           <div className="flex items-center gap-2 truncate">
-            <span className="text-base font-bold text-[#FACC15]">ॐ</span>
+            <OmEmblem className="w-5 h-5 shrink-0 drop-shadow-sm" />
             <span className="truncate font-medium">{t.topBar.announcement}</span>
           </div>
 
