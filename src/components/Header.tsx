@@ -121,7 +121,7 @@ export const Header: React.FC = () => {
             {/* Zone 3: Primary Consultation CTA & Mobile Toggle */}
             <div className="flex items-center gap-3 shrink-0">
               <a
-                href={getWhatsAppUrl(language === 'kn' ? undefined : (language === 'hi' ? 'नमस्ते पंडित जी, मुझे ज्योतिषीय परामर्श चाहिए।' : 'Hello Pandit Ji, I would like to consult regarding astrology.'))}
+                href={getWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-bold text-[#4A050D] bg-gradient-to-r from-[#FEF08A] via-[#FACC15] to-[#EAB308] hover:from-[#FFFFFF] hover:to-[#FACC15] rounded-full shadow-md shadow-[#FACC15]/30 hover:shadow-lg transition-all duration-200 active:scale-95 whitespace-nowrap cursor-pointer border border-[#FEF08A]"

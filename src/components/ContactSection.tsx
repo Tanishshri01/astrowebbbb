@@ -108,7 +108,7 @@ export const ContactSection: React.FC = () => {
             {/* Direct Quick Action Buttons */}
             <div className="space-y-3 pt-4 border-t border-[#FACC15]/30">
               <a
-                href={getWhatsAppUrl(t.servicesSection.items[0]?.whatsappMessage)}
+                href={getWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 text-sm sm:text-base font-black text-[#380307] bg-gradient-to-r from-[#FEF08A] via-[#FACC15] to-[#EAB308] hover:from-[#FFFFFF] hover:to-[#FACC15] rounded-xl shadow-lg transition-all active:scale-98 border border-[#FEF08A]"

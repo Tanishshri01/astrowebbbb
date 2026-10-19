@@ -141,7 +141,7 @@ export const KrishnaDarshanSection: React.FC = () => {
 
               {/* WhatsApp Seeking Blessing Button */}
               <a
-                href={getWhatsAppUrl('ನಮಸ್ಕಾರ ಪಂಡಿತ್ ಸಚಿನ್ ಶರ್ಮಾ ಅವರೇ, ಶ್ರೀ ಕೃಷ್ಣ ಪರಮಾತ್ಮನ ಕೃಪೆಯಿಂದ ನನಗೆ ಜ್ಯೋತಿಷ್ಯ ಸಮಾಲೋಚನೆ ಬೇಕಾಗಿದೆ.')}
+                href={getWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2.5 px-6 py-3.5 text-sm sm:text-base font-extrabold text-[#380307] bg-gradient-to-r from-[#FEF08A] via-[#FACC15] to-[#EAB308] hover:from-[#FFFFFF] hover:to-[#FACC15] rounded-xl shadow-xl shadow-[#FACC15]/20 transition-all active:scale-98 border-2 border-[#FEF08A] cursor-pointer"

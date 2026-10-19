@@ -38,7 +38,7 @@ export const WhatsAppPopup: React.FC = () => {
   };
 
   const handleOpenWhatsApp = () => {
-    window.open(getWhatsAppUrl(t.servicesSection.items[0]?.whatsappMessage), '_blank', 'noopener,noreferrer');
+    window.open(getWhatsAppUrl(), '_blank', 'noopener,noreferrer');
     handleDismiss();
   };
 

@@ -18,7 +18,8 @@ import {
   RefreshCw,
   Upload,
   Sparkles,
-  Search
+  Search,
+  KeyRound
 } from 'lucide-react';
 import { useDeveloperMode } from '../context/DeveloperContext';
 import { 
@@ -45,7 +46,7 @@ const SERVICE_ITEMS_META = [
 ];
 
 export const DeveloperToolbar: React.FC = () => {
-  const { isDevMode, disableDevMode, showToast, toastMessage } = useDeveloperMode();
+  const { isDevMode, disableDevMode, showToast, toastMessage, openChangePasswordModal } = useDeveloperMode();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'manager' | 'guide'>('manager');
@@ -615,6 +616,16 @@ export const DeveloperToolbar: React.FC = () => {
                   <FileText className="w-3.5 h-3.5 text-[#FACC15]" />
                   <span className="hidden md:inline">Blog</span>
                 </a>
+
+                <button
+                  type="button"
+                  onClick={openChangePasswordModal}
+                  className="px-2.5 py-1.5 rounded-lg bg-[#2A0408] hover:bg-[#3D050A] border border-[#FACC15]/60 text-[#FEF08A] text-xs font-bold flex items-center gap-1.5 transition cursor-pointer"
+                  title="Change Developer Mode Password"
+                >
+                  <KeyRound className="w-3.5 h-3.5 text-[#FACC15]" />
+                  <span className="hidden sm:inline">Change Password</span>
+                </button>
 
                 <button
                   type="button"

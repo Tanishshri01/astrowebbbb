@@ -210,7 +210,7 @@ export const Hero: React.FC = () => {
               
               {/* Primary WhatsApp Action in Haldi Yellow with Red Text */}
               <a
-                href={getWhatsAppUrl(t.servicesSection.items[0]?.whatsappMessage)}
+                href={getWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2.5 px-6 py-3.5 text-base font-extrabold text-[#380307] bg-gradient-to-r from-[#FEF08A] via-[#FACC15] to-[#EAB308] hover:from-[#FFFFFF] hover:to-[#FACC15] rounded-xl shadow-xl shadow-[#FACC15]/30 hover:shadow-2xl transition-all duration-200 active:scale-98 cursor-pointer text-center border-2 border-[#FEF08A]"
@@ -363,7 +363,7 @@ export const Hero: React.FC = () => {
               {/* Action Buttons */}
               <div className="grid grid-cols-2 gap-2 mb-3">
                 <a
-                  href={getWhatsAppUrl(t.servicesSection.items[0]?.whatsappMessage)}
+                  href={getWhatsAppUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="py-2.5 px-3 text-xs font-black text-[#380307] bg-gradient-to-r from-[#FEF08A] to-[#FACC15] hover:brightness-110 rounded-xl flex items-center justify-center gap-1.5 shadow-md transition-all border border-[#FEF08A] text-center"

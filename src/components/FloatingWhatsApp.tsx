@@ -11,7 +11,7 @@ export const FloatingWhatsApp: React.FC = () => {
   return (
     <aside aria-label="Fast WhatsApp Contact">
       <a
-        href={getWhatsAppUrl(t.servicesSection.items[0]?.whatsappMessage)}
+        href={getWhatsAppUrl()}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 flex items-center gap-2 group p-3 sm:px-4 sm:py-3 rounded-full bg-[#15803D] text-[#FFFFFF] shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 border-2 border-[#FACC15] focus:outline-hidden focus:ring-4 focus:ring-[#FACC15]/50"

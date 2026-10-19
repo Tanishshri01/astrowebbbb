@@ -18,7 +18,7 @@ export const FACEBOOK_URL = "https://www.facebook.com/share/1XMmK1FwvB/";
 export const DESIGNER_URL = "https://www.instagram.com/deepproductionss?xtok=azRqODR1aXRqdW1p";
 
 export const DEFAULT_WHATSAPP_MESSAGE =
-  "ನಮಸ್ಕಾರ ಪಂಡಿತ್ ಸಚಿನ್ ಶರ್ಮಾ ಅವರೇ, ನನಗೆ ಜ್ಯೋತಿಷ್ಯ ಮಾರ್ಗದರ್ಶನ ಮತ್ತು ಸಮಾಲೋಚನೆ ಬೇಕಾಗಿದೆ.";
+  "🙏 Namaste Guruji! I would like to seek your guidance regarding some personal challenges in my life. Kindly help me understand the possible solutions to my problems related to relationships, family, finances, career, or health. Please share the details of your consultation. Thank you, Guruji. 🙏";
 
 /**
  * Generates an encoded WhatsApp deep-link URL.
